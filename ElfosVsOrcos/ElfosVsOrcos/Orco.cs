@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-//estoy bien puteado
+//estoy bien ksdfkjvsnjdljnlerv
 
 namespace ElfosVsOrcos
 {
