@@ -7,12 +7,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-//estoy bien ksdfkjvsnjdljnlerv
+//estoy bien ksdfkjvsnjdljnlervadsfasfasdfasdf
 
 namespace ElfosVsOrcos
 {
-    
-        
+    //asdfasjasjksadjkanjfjlnsadvknjlasv
+        ///asfgasdfasdfasdfasd
     /// <summary>
     /// Facing direction along the X axis.
     /// </summary>
