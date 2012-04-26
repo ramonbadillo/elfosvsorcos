@@ -81,7 +81,7 @@ namespace ElfosVsOrcos
         /// <summary>
         /// The speed at which this enemy moves along the X axis.
         /// </summary>
-        private const float MoveSpeed = 50.0f;
+        private const float MoveSpeed = 100.0f;
 
         /// <summary>
         /// Constructs a new Enemy.
@@ -107,12 +107,32 @@ namespace ElfosVsOrcos
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
+            int width = (int)(runAnimation.FrameWidth * 0.4);
+            int left = (runAnimation.FrameWidth - width) / 2;
+            int height = (int)(runAnimation.FrameWidth * 0.7);
+            int top = runAnimation.FrameHeight - height;
+            localBounds = new Rectangle(left, top, width, height);
+            
+        }
+        public void LoadContent2(string spriteSet, string spriteSet2)
+        {
+            // Load animations.
+            spriteSet = "Sprites/" + spriteSet + "/";
+            spriteSet2 = "Sprites/" + spriteSet2 + "/";
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "run"), 0.08f, true, 68);
+            Console.WriteLine(spriteSet + "Run");
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 80);
+            Console.WriteLine(spriteSet + "Idle");
+            Console.WriteLine(spriteSet2 + "vuela");
+            sprite.PlayAnimation(runAnimation);
+
+            // Calculate bounds within texture size.
             int width = (int)(idleAnimation.FrameWidth * 0.4);
             int left = (idleAnimation.FrameWidth - width) / 2;
             int height = (int)(idleAnimation.FrameWidth * 0.7);
             int top = idleAnimation.FrameHeight - height;
             localBounds = new Rectangle(left, top, width, height);
-            
+
         }
 
 

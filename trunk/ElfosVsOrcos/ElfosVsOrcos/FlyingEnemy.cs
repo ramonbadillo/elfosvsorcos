@@ -1,19 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region File Description
+//-----------------------------------------------------------------------------
+// Enemy.cs
+//
+// Microsoft XNA Community Game Platform
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//-----------------------------------------------------------------------------
+#endregion
+
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ElfosVsOrcos
 {
-    
+    /// <summary>
+    /// Facing direction along the X axis.
+    /// </summary>
+    //enum FaceDirection
+    //{
+    //    Left = -1,
+    //    Right = 1,
+    //}
 
     /// <summary>
     /// A monster who is impeding the progress of our fearless adventurer.
     /// </summary>
-    class Orco
+    class FlyingEnemy
     {
         public Level Level
         {
@@ -30,18 +42,6 @@ namespace ElfosVsOrcos
         }
         Vector2 position;
 
-        public Rectangle Vision
-        {
-            get
-            {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;
-                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-
-                return new Rectangle(left, top, localBounds.Width, localBounds.Height);
-            }
-        }
-
-
         private Rectangle localBounds;
         /// <summary>
         /// Gets a rectangle which bounds this enemy in world space.
@@ -50,8 +50,10 @@ namespace ElfosVsOrcos
         {
             get
             {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+                Console.WriteLine("x "+ Position.X);
+                Console.WriteLine("y "+ Position.Y);
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
             }
@@ -75,21 +77,21 @@ namespace ElfosVsOrcos
         /// <summary>
         /// How long to wait before turning around.
         /// </summary>
-        private const float MaxWaitTime = 0.01f;
+        private const float MaxWaitTime = 1f;
 
         /// <summary>
         /// The speed at which this enemy moves along the X axis.
         /// </summary>
-        private const float MoveSpeed = 64.0f;
+        private const float MoveSpeed = 50.0f;
 
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public Orco(Level level, Vector2 position, string spriteSet)
+        public FlyingEnemy(Level level, Vector2 position, string spriteSet,int TES)
         {
             this.level = level;
             this.position = position;
-
+            this.TES = TES;
             LoadContent(spriteSet);
         }
 
@@ -100,10 +102,30 @@ namespace ElfosVsOrcos
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true,64);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,68);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,70);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,80);
             sprite.PlayAnimation(idleAnimation);
+
+            // Calculate bounds within texture size.
+            int width = (int)(runAnimation.FrameWidth * 0.4);
+            int left = (runAnimation.FrameWidth - width) / 2;
+            int height = (int)(runAnimation.FrameWidth * 0.7);
+            int top = runAnimation.FrameHeight - height;
+            localBounds = new Rectangle(left, top, width, height);
+            
+        }
+        public void LoadContent2(string spriteSet, string spriteSet2)
+        {
+            // Load animations.
+            spriteSet = "Sprites/" + spriteSet + "/";
+            spriteSet2 = "Sprites/" + spriteSet2 + "/";
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "run"), 0.08f, true, 68);
+            Console.WriteLine(spriteSet + "Run");
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 80);
+            Console.WriteLine(spriteSet + "Idle");
+            Console.WriteLine(spriteSet2 + "vuela");
+            sprite.PlayAnimation(runAnimation);
 
             // Calculate bounds within texture size.
             int width = (int)(idleAnimation.FrameWidth * 0.4);
@@ -111,7 +133,7 @@ namespace ElfosVsOrcos
             int height = (int)(idleAnimation.FrameWidth * 0.7);
             int top = idleAnimation.FrameHeight - height;
             localBounds = new Rectangle(left, top, width, height);
-            
+
         }
 
 
@@ -120,16 +142,21 @@ namespace ElfosVsOrcos
         /// </summary>
         /// 
         int i = 0;
+        int TES;
         public void Update(GameTime gameTime)
         {
-            
+
             i++;
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (i < 10) { 
+            if (i > TES)
+            {
                 direction = (FaceDirection)(-(int)direction);
-                
+                i = 0;
+
             }
-                
+            
+            elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             // Calculate tile position based on the side we are walking towards.
             float posX = Position.X + localBounds.Width / 2 * (int)direction;
             int tileX = (int)Math.Floor(posX / Tile.Width) - (int)direction;
@@ -148,11 +175,9 @@ namespace ElfosVsOrcos
             else
             {
                 // If we are about to run into a wall or off a cliff, start waiting.
-                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable ||
-                    Level.GetCollision(tileX + (int)direction, tileY) == TileCollision.Passable)
+                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable)
                 {
                     waitTime = MaxWaitTime;
-                    Console.WriteLine(i);
                 }
                 else
                 {

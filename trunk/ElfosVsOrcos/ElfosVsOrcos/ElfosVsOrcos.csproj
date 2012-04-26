@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>HiDef</XnaProfile>
+    <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>45ad8345-a429-4826-99a8-05101947369f</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>
@@ -114,6 +114,8 @@
     <Compile Include="AnimationPlayer.cs" />
     <Compile Include="Camara.cs" />
     <Compile Include="Circle.cs" />
+    <Compile Include="FlyingEnemy.cs" />
+    <Compile Include="volador.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Gem.cs" />

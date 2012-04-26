@@ -13,7 +13,7 @@ namespace ElfosVsOrcos
     /// <summary>
     /// A monster who is impeding the progress of our fearless adventurer.
     /// </summary>
-    class Orco
+    class volador
     {
         public Level Level
         {
@@ -58,8 +58,7 @@ namespace ElfosVsOrcos
         }
 
         // Animations
-        private Animation runAnimation;
-        private Animation idleAnimation;
+        private Animation vuelaAnimation;
         private AnimationPlayer sprite;
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace ElfosVsOrcos
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public Orco(Level level, Vector2 position, string spriteSet)
+        public volador(Level level, Vector2 position, string spriteSet)
         {
             this.level = level;
             this.position = position;
@@ -100,17 +99,17 @@ namespace ElfosVsOrcos
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true,64);
+            vuelaAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "vuela"), 0.1f, true,64);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,70);
-            sprite.PlayAnimation(idleAnimation);
+           // idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,70);
+            sprite.PlayAnimation(vuelaAnimation);
 
             // Calculate bounds within texture size.
-            int width = (int)(idleAnimation.FrameWidth * 0.4);
-            int left = (idleAnimation.FrameWidth - width) / 2;
-            int height = (int)(idleAnimation.FrameWidth * 0.7);
-            int top = idleAnimation.FrameHeight - height;
-            localBounds = new Rectangle(left, top, width, height);
+            //////int width = (int)(idleAnimation.FrameWidth * 0.4);
+            //////int left = (idleAnimation.FrameWidth - width) / 2;
+            //////int height = (int)(idleAnimation.FrameWidth * 0.7);
+            //////int top = idleAnimation.FrameHeight - height;
+            //////localBounds = new Rectangle(left, top, width, height);
             
         }
 
@@ -174,11 +173,11 @@ namespace ElfosVsOrcos
                 Level.TimeRemaining == TimeSpan.Zero ||
                 waitTime > 0)
             {
-                sprite.PlayAnimation(idleAnimation);
+                //sprite.PlayAnimation(idleAnimation);
             }
             else
             {
-                sprite.PlayAnimation(runAnimation);
+                sprite.PlayAnimation(vuelaAnimation);
             }
 
 
