@@ -44,6 +44,8 @@ namespace ElfosVsOrcos
 
         private List<Gem> gems = new List<Gem>();
         private List<Enemy> enemies = new List<Enemy>();
+        private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
+        
 
         // Key locations in the level.        
         private Vector2 start;
@@ -199,14 +201,14 @@ namespace ElfosVsOrcos
                     return LoadTile("Platform", TileCollision.Platform);
 
                 // Various enemies
-                case 'A':
+                case 'O':
                     return LoadEnemyTile(x, y, "MonsterA");
                 case 'B':
-                    return LoadEnemyTile(x, y, "MonsterB");
+                   return LoadEnemyTile(x, y, "MonsterB");
                 case 'C':
                     return LoadEnemyTile(x, y, "MonsterC");
                 case 'D':
-                    return LoadEnemyTile(x, y, "MonsterD");
+                    return LoadEnemyTile(x, y, "MonsterA");
 
                 // Platform block
                 case '~':
@@ -224,7 +226,10 @@ namespace ElfosVsOrcos
                 case '#':
                     return LoadVarietyTile("BlockA", 4, TileCollision.Impassable);
 
+                case 'V':
+                    return LoadFlyingEnemyTile(x, y, "MonsterF");
                 // Unknown tile type character
+
                 default:
                     throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
             }
@@ -298,6 +303,13 @@ namespace ElfosVsOrcos
         {
             Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
             enemies.Add(new Enemy(this, position, spriteSet,150));
+
+            return new Tile(null, TileCollision.Passable);
+        }
+        private Tile LoadFlyingEnemyTile(int x, int y, string spriteSet)
+        {
+            Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
+            enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 150));
 
             return new Tile(null, TileCollision.Passable);
         }
@@ -387,7 +399,7 @@ namespace ElfosVsOrcos
             Console.WriteLine(player.Position.X - cam.Pos.X);
             //cam.Zoom += 0.01f;
             }
-                
+             
             if (keyboardState.IsKeyDown(Keys.R))
                 cam.Zoom -= 0.01f;
 
@@ -467,6 +479,7 @@ namespace ElfosVsOrcos
                     gems.RemoveAt(i--);
                     OnGemCollected(gem, Player);
                 }
+                
             }
         }
 
@@ -476,10 +489,11 @@ namespace ElfosVsOrcos
         private void UpdateEnemies(GameTime gameTime)
         {   
             List<Enemy> muertos = new List<Enemy>();
+            List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
-
+                
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
@@ -488,10 +502,38 @@ namespace ElfosVsOrcos
                     else
                         muertos.Add(enemy);
                 }
+                
             }
             foreach (Enemy enemy in muertos) {
                 enemies.Remove(enemy);
             }
+            
+            
+            //para enemigos voladores
+
+            foreach (FlyingEnemy enemyFl in enemiesFl)
+            {
+                enemyFl.Update(gameTime);
+
+                // Touching an enemy instantly kills the player
+                if (enemyFl.BoundingRectangle.Intersects(Player.BoundingRectangle))
+                {
+                    if (enemyFl.Position.X == player.Position.X) {
+                        
+                    }
+
+                    if (!Player.isAtacando)
+                        OnPlayerKilledFl(enemyFl);
+                    else
+                        muertosFl.Add(enemyFl);
+                }
+            }
+            foreach (FlyingEnemy enemyFl in muertosFl)
+            {
+                enemiesFl.Remove(enemyFl);
+            }
+
+
         }
 
         /// <summary>
@@ -517,7 +559,10 @@ namespace ElfosVsOrcos
         {
             Player.OnKilled(killedBy);
         }
-
+        private void OnPlayerKilledFl(FlyingEnemy killedByFl)
+        {
+            Player.OnKilled(killedByFl);
+        }
         /// <summary>
         /// Called when the player reaches the level's exit.
         /// </summary>
@@ -558,6 +603,9 @@ namespace ElfosVsOrcos
 
             foreach (Enemy enemy in enemies)
                 enemy.Draw(gameTime, spriteBatch);
+
+            foreach (FlyingEnemy enemyFl in enemiesFl)
+               enemyFl.Draw(gameTime, spriteBatch);
 
             for (int i = EntityLayer + 1; i < layers.Length; ++i)
                 spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);

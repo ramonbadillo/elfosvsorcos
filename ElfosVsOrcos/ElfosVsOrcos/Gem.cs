@@ -24,7 +24,7 @@ namespace ElfosVsOrcos
         private SoundEffect collectedSound;
 
         public const int PointValue = 30;
-        public readonly Color Color = Color.Yellow;
+        public readonly Color Color = Color.Coral;
 
         // The gem is animated from a base position along the Y axis.
         private Vector2 basePosition;

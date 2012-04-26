@@ -445,6 +445,17 @@ namespace ElfosVsOrcos
 
             //sprite.PlayAnimation(dieAnimation);
         }
+        public void OnKilled(FlyingEnemy killedByFl)
+        {
+            isAlive = false;
+
+            if (killedByFl != null)
+                killedSound.Play();
+            else
+                fallSound.Play();
+
+            //sprite.PlayAnimation(dieAnimation);
+        }
 
         /// <summary>
         /// Called when this player reaches the level's exit.
