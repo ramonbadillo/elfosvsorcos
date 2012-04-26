@@ -45,6 +45,7 @@ namespace ElfosVsOrcos
         private List<Gem> gems = new List<Gem>();
         private List<Enemy> enemies = new List<Enemy>();
         private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
+        private List<LatexEnemy> enemiesLatex = new List<LatexEnemy>();
         
 
         // Key locations in the level.        
@@ -230,6 +231,10 @@ namespace ElfosVsOrcos
                     return LoadFlyingEnemyTile(x, y, "MonsterF");
                 // Unknown tile type character
 
+                case 'L':
+                    return LoadLatexEnemyTile(x, y, "MonsterC");
+                // Unknown tile type character
+
                 default:
                     throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
             }
@@ -310,6 +315,14 @@ namespace ElfosVsOrcos
         {
             Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
             enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 150));
+
+            return new Tile(null, TileCollision.Passable);
+        }
+
+        private Tile LoadLatexEnemyTile(int x, int y, string spriteSet)
+        {
+            Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
+            enemiesLatex.Add(new LatexEnemy(this, position, spriteSet, 150));
 
             return new Tile(null, TileCollision.Passable);
         }
@@ -416,7 +429,6 @@ namespace ElfosVsOrcos
                 }
             
             
-
             // Pause while the player is dead or time is expired.
             if (!Player.IsAlive || TimeRemaining == TimeSpan.Zero)
             {
@@ -490,6 +502,7 @@ namespace ElfosVsOrcos
         {   
             List<Enemy> muertos = new List<Enemy>();
             List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
+            List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
@@ -533,6 +546,31 @@ namespace ElfosVsOrcos
                 enemiesFl.Remove(enemyFl);
             }
 
+            //para enemigos voladores
+
+            foreach (LatexEnemy enemyLatex in enemiesLatex)
+            {
+                enemyLatex.Update(gameTime);
+
+                // Touching an enemy instantly kills the player
+                if (enemyLatex.BoundingRectangle.Intersects(Player.BoundingRectangle))
+                {
+                    if (enemyLatex.Position.X == player.Position.X)
+                    {
+
+                    }
+
+                    if (!Player.isAtacando)
+                        OnPlayerKilledLatex(enemyLatex);
+                    else
+                        muertosLatex.Add(enemyLatex);
+                }
+            }
+            foreach (LatexEnemy enemyLatex in muertosLatex)
+            {
+                enemiesLatex.Remove(enemyLatex);
+            }
+
 
         }
 
@@ -562,6 +600,10 @@ namespace ElfosVsOrcos
         private void OnPlayerKilledFl(FlyingEnemy killedByFl)
         {
             Player.OnKilled(killedByFl);
+        }
+        private void OnPlayerKilledLatex(LatexEnemy killedByLatex)
+        {
+            Player.OnKilled(killedByLatex);
         }
         /// <summary>
         /// Called when the player reaches the level's exit.
@@ -606,6 +648,9 @@ namespace ElfosVsOrcos
 
             foreach (FlyingEnemy enemyFl in enemiesFl)
                enemyFl.Draw(gameTime, spriteBatch);
+            
+            foreach (LatexEnemy enemyLatex in enemiesLatex)
+                enemyLatex.Draw(gameTime, spriteBatch);
 
             for (int i = EntityLayer + 1; i < layers.Length; ++i)
                 spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
