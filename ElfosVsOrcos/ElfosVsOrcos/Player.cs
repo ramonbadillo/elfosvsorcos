@@ -456,6 +456,17 @@ namespace ElfosVsOrcos
 
             //sprite.PlayAnimation(dieAnimation);
         }
+        public void OnKilled(LatexEnemy killedByLatex)
+        {
+            isAlive = false;
+
+            if (killedByLatex != null)
+                killedSound.Play();
+            else
+                fallSound.Play();
+
+            //sprite.PlayAnimation(dieAnimation);
+        }
 
         /// <summary>
         /// Called when this player reaches the level's exit.

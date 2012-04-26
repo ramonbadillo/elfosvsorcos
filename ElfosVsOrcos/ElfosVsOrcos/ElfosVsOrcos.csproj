@@ -114,6 +114,7 @@
     <Compile Include="AnimationPlayer.cs" />
     <Compile Include="Camara.cs" />
     <Compile Include="Circle.cs" />
+    <Compile Include="LatexEnemy.cs" />
     <Compile Include="FlyingEnemy.cs" />
     <Compile Include="volador.cs" />
     <Compile Include="Enemy.cs" />
