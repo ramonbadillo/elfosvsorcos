@@ -488,7 +488,8 @@ namespace ElfosVsOrcos
                 flip = SpriteEffects.None;
 
             // Draw that sprite.
-            sprite.Draw(gameTime, spriteBatch, Position, flip);
+            if(this.isAlive)
+                sprite.Draw(gameTime, spriteBatch, Position, flip);
         }
     }
 }
