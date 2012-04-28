@@ -151,7 +151,7 @@ namespace ElfosVsOrcos
                     Level.GetCollision(tileX + (int)direction, tileY) == TileCollision.Passable)
                 {
                     waitTime = MaxWaitTime;
-                    Console.WriteLine(i);
+                    //Console.WriteLine(i);
                 }
                 else
                 {

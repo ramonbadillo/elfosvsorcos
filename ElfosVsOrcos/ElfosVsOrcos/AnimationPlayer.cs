@@ -85,6 +85,7 @@ namespace ElfosVsOrcos
                 {
                     
                     frameIndex = (frameIndex + 1) % Animation.FrameCount;
+                    //Console.WriteLine(""+Animation.Texture);
                 }
                 else
                 {

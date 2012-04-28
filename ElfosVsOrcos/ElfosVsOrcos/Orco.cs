@@ -100,9 +100,9 @@ namespace ElfosVsOrcos
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true,64);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true,68);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,70);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,80);
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
@@ -152,7 +152,7 @@ namespace ElfosVsOrcos
                     Level.GetCollision(tileX + (int)direction, tileY) == TileCollision.Passable)
                 {
                     waitTime = MaxWaitTime;
-                    Console.WriteLine(i);
+                    //Console.WriteLine(i);
                 }
                 else
                 {

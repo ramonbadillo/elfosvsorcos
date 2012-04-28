@@ -52,8 +52,8 @@ namespace ElfosVsOrcos
             {
                 int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-                Console.WriteLine("x "+ Position.X);
-                Console.WriteLine("y "+ Position.Y);
+                //Console.WriteLine("x "+ Position.X);
+                //Console.WriteLine("y "+ Position.Y);
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
             }
@@ -102,9 +102,9 @@ namespace ElfosVsOrcos
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,68);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,32);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,80);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.08f, true,32);
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
@@ -115,16 +115,17 @@ namespace ElfosVsOrcos
             localBounds = new Rectangle(left, top, width, height);
             
         }
+        /*
         public void LoadContent2(string spriteSet, string spriteSet2)
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
             spriteSet2 = "Sprites/" + spriteSet2 + "/";
             runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "run"), 0.08f, true, 68);
-            Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 80);
-            Console.WriteLine(spriteSet + "Idle");
-            Console.WriteLine(spriteSet2 + "vuela");
+            //Console.WriteLine(spriteSet + "Run");
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, false, 80);
+            //Console.WriteLine(spriteSet + "Idle");
+            //Console.WriteLine(spriteSet2 + "vuela");
             sprite.PlayAnimation(runAnimation);
 
             // Calculate bounds within texture size.
@@ -135,6 +136,7 @@ namespace ElfosVsOrcos
             localBounds = new Rectangle(left, top, width, height);
 
         }
+        */
 
 
         /// <summary>
