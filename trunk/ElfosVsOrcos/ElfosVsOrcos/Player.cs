@@ -20,6 +20,8 @@ namespace ElfosVsOrcos
     /// </summary>
     class Player
     {
+        private int Vida=10;
+
         // Animations
         private Animation idleAnimation;
         private Animation runAnimation;
@@ -28,7 +30,7 @@ namespace ElfosVsOrcos
         private Animation dieAnimation;
         private SpriteEffects flip = SpriteEffects.None;
         private AnimationPlayer sprite;
-
+        
 
         private Texture2D idleI;
         private Texture2D runI;
@@ -146,23 +148,18 @@ namespace ElfosVsOrcos
             runAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Corre"), 0.2f, true, spritemono);
             jumpAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Salta"), 0.2f, true, spritemono);
             atackAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Ataca"), 0.2f, true,54);
-            dieAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Die"), 0.1f, false,20);
+            dieAnimation = new Animation(Level.Content.Load<Texture2D>("Sprites/Player/Corre"), 0.1f, true,20);
 
 
             //idleI = new Texture2D(as,);
 
             // Calculate bounds within texture size.            
             int width = (int)(idleAnimation.FrameWidth * 0.9);
-            Console.WriteLine(idleAnimation.FrameWidth);
             int left = (idleAnimation.FrameWidth - width) / 2;
             int height = (int)(idleAnimation.FrameWidth * 0.9);
             int top = idleAnimation.FrameHeight - height;
             localBounds = new Rectangle(left, top, width, height);
-            Console.WriteLine(left);
-            Console.WriteLine(top);
-            Console.WriteLine(width);
-            Console.WriteLine(height);
-
+            
             // Load sounds.            
             killedSound = Level.Content.Load<SoundEffect>("Sounds/PlayerKilled");
             jumpSound = Level.Content.Load<SoundEffect>("Sounds/PlayerJump");
@@ -194,6 +191,8 @@ namespace ElfosVsOrcos
             KeyboardState keyboardState, 
             GamePadState gamePadState)
         {
+            
+            //Console.WriteLine(gameTime.ElapsedGameTime.Duration());
             GetInput(keyboardState, gamePadState);
 
             ApplyPhysics(gameTime);
@@ -203,8 +202,13 @@ namespace ElfosVsOrcos
                 if (Math.Abs(Velocity.X) - 0.02f > 0)
                 {
                     sprite.PlayAnimation(runAnimation);
-                }else if (isAtacando)
-                        sprite.PlayAnimation(atackAnimation);
+                }
+                else if (isAtacando)
+                {
+                    sprite.PlayAnimation(atackAnimation);
+                    //killedSound.Play();
+                    
+                }
                 else
                 {
                     sprite.PlayAnimation(idleAnimation);
@@ -436,13 +440,29 @@ namespace ElfosVsOrcos
         /// </param>
         public void OnKilled(Enemy killedBy)
         {
-            isAlive = false;
+            if (Vida <= 0)
+            {
+                isAlive = false;
 
-            if (killedBy != null)
-                killedSound.Play();
+                if (killedBy != null)
+                    killedSound.Play();
+                else
+                    fallSound.Play();
+            }
             else
-                fallSound.Play();
-
+            {
+                if (killedBy != null)
+                {
+                    Vida--;
+                    killedSound.Play();
+                    if (Velocity.X > 0)
+                        Position = new Vector2(Position.X - 50, Position.Y);
+                    else if (Velocity.X < 0)
+                        Position = new Vector2(Position.X + 50, Position.Y);
+                }
+            }
+            if (killedBy == null)
+                isAlive = false;
             //sprite.PlayAnimation(dieAnimation);
         }
         public void OnKilled(FlyingEnemy killedByFl)

@@ -120,7 +120,6 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Gem.cs" />
-    <Compile Include="Halcon.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Orco.cs" />
     <Compile Include="Plat.cs" />

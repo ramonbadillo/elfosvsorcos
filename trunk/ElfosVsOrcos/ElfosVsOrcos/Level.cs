@@ -46,6 +46,7 @@ namespace ElfosVsOrcos
         private List<Enemy> enemies = new List<Enemy>();
         private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
         private List<LatexEnemy> enemiesLatex = new List<LatexEnemy>();
+        private List<Orco> enemiesOrco = new List<Orco>();
         
 
         // Key locations in the level.        
@@ -203,8 +204,8 @@ namespace ElfosVsOrcos
 
                 // Various enemies
                 case 'O':
-                    return LoadEnemyTile(x, y, "MonsterA");
-                case 'B':
+                    return LoadOrcoTile(x, y, "MonsterA");
+                case 'H':
                    return LoadEnemyTile(x, y, "MonsterB");
                 case 'C':
                     return LoadEnemyTile(x, y, "MonsterC");
@@ -327,6 +328,15 @@ namespace ElfosVsOrcos
             return new Tile(null, TileCollision.Passable);
         }
 
+        private Tile LoadOrcoTile(int x, int y, string spriteSet)
+        {
+            Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
+            enemiesOrco.Add(new Orco(this, position, spriteSet));
+
+            return new Tile(null, TileCollision.Passable);
+        }
+
+
         /// <summary>
         /// Instantiates a gem and puts it in the level.
         /// </summary>
@@ -419,13 +429,13 @@ namespace ElfosVsOrcos
             if (player.Position.X - cam.Pos.X > 200)
                 if (keyboardState.IsKeyDown(Keys.Right)){
                     //player.position.X = player.position.X - 4.5f;
-                    cam.MoveRight(3.2f);
+                    cam.MoveRight(3.6f);
                 }
             if (cam.Pos.X -player.Position.X   > 300)
                 if (keyboardState.IsKeyDown(Keys.Left))
                 {
                     //player.position.X = player.position.X - 4.5f;
-                    cam.MoveLeft(3.2f);
+                    cam.MoveLeft(3.6f);
                 }
             
             

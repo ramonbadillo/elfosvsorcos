@@ -44,7 +44,7 @@ namespace ElfosVsOrcos
 
         public GameplayScreen()
         {
-            Console.WriteLine("asdasd");
+            
 
             
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
@@ -166,8 +166,8 @@ namespace ElfosVsOrcos
         private void LoadNextLevel()
         {
             cam._pos = new Vector2(ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Width * 0.5f, ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Height * 0.5f);
-            Console.WriteLine(ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Width * 0.5f);
-            Console.WriteLine(ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Height * 0.5f);
+            //Console.WriteLine(ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Width * 0.5f);
+            //Console.WriteLine(ScreenManager.SpriteBatch.GraphicsDevice.Viewport.Height * 0.5f);
             // move to the next level
             levelIndex = (levelIndex + 1) % numberOfLevels;
 
