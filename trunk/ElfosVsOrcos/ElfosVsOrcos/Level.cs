@@ -315,7 +315,7 @@ namespace ElfosVsOrcos
         private Tile LoadFlyingEnemyTile(int x, int y, string spriteSet)
         {
             Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
-            enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 150));
+            enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 500));
 
             return new Tile(null, TileCollision.Passable);
         }
@@ -427,12 +427,13 @@ namespace ElfosVsOrcos
                 cam.Zoom -= 0.01f;
 
             if (player.Position.X - cam.Pos.X > 200)
-                if (keyboardState.IsKeyDown(Keys.Right)){
+                if (keyboardState.IsKeyDown(Keys.Right) || gamePadState.IsButtonDown(Buttons.DPadRight) || gamePadState.IsButtonDown(Buttons.LeftThumbstickRight))
+                {
                     //player.position.X = player.position.X - 4.5f;
                     cam.MoveRight(3.6f);
                 }
             if (cam.Pos.X -player.Position.X   > 300)
-                if (keyboardState.IsKeyDown(Keys.Left))
+                if (keyboardState.IsKeyDown(Keys.Left) || gamePadState.IsButtonDown(Buttons.DPadLeft) || gamePadState.IsButtonDown(Buttons.LeftThumbstickLeft))
                 {
                     //player.position.X = player.position.X - 4.5f;
                     cam.MoveLeft(3.6f);
@@ -644,7 +645,12 @@ namespace ElfosVsOrcos
         /// </summary>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+
+    
             
+             
+             
+
 
             DrawTiles(spriteBatch);
 
@@ -662,11 +668,15 @@ namespace ElfosVsOrcos
             foreach (LatexEnemy enemyLatex in enemiesLatex)
                 enemyLatex.Draw(gameTime, spriteBatch);
 
-            for (int i = EntityLayer + 1; i < layers.Length; ++i)
-                spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
+            //for (int i = EntityLayer + 1; i < layers.Length; ++i)
+            //    spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
             //spriteBatch.Draw();
             //for (int i = 0; i <= ; ++i)
-            //    spriteBatch.Draw(layers[0], Vector2.Zero, Color.White);
+                //spriteBatch.Draw(layers[0], Vector2.Zero, Color.Red);
+                //spriteBatch.Draw(layers[1], Vector2.Zero, Color.Blue);
+
+            for (int i = EntityLayer + 1; i < layers.Length; ++i)
+                spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
 
         }
 

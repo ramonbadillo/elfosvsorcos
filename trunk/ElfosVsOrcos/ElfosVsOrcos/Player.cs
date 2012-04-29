@@ -79,7 +79,7 @@ namespace ElfosVsOrcos
         private const float AirDragFactor = 0.58f;
 
         // Constants for controlling vertical movement
-        private const float MaxJumpTime = 0.35f;
+        private const float MaxJumpTime = 0.3f;
         private const float JumpLaunchVelocity = -3500.0f;
         private const float GravityAcceleration = 3400.0f;
         private const float MaxFallSpeed = 550.0f;
@@ -250,7 +250,8 @@ namespace ElfosVsOrcos
                     movement = 1.0f;
                 }
 
-                isAtacando = keyboardState.IsKeyDown(Keys.Space);
+                isAtacando = keyboardState.IsKeyDown(Keys.Space)||
+                    gamePadState.IsButtonDown(Buttons.B);
                 //Console.WriteLine(isAtacando);
                 // Check if the player wants to jump.
                 isJumping =

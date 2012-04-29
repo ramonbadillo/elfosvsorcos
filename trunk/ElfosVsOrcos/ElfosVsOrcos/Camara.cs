@@ -58,7 +58,9 @@ namespace ElfosVsOrcos
             
         }
 
-
+        public void ZoomCam(float amount) {
+            _zoom += amount;
+        }
 
        // Get set position
         public Vector2 Pos

@@ -7,16 +7,32 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElfosVsOrcosContent", "Elfo
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		Release|Xbox 360 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|x86.ActiveCfg = Debug|x86
 		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|x86.Build.0 = Debug|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Debug|Xbox 360.Build.0 = Debug|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|x86.ActiveCfg = Release|x86
 		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|x86.Build.0 = Release|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|Xbox 360.ActiveCfg = Release|x86
+		{17AC7FA7-133E-4445-8FB3-A02404B58FD3}.Release|Xbox 360.Build.0 = Release|x86
+		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Debug|x86.ActiveCfg = Debug|x86
+		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Release|x86.ActiveCfg = Release|x86
+		{B803C436-BCCC-4CC2-8EB4-BF8298E81885}.Release|Xbox 360.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
