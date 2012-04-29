@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -64,7 +64,7 @@ namespace ElfosVsOrcos
 
             // Load fonts
             hudFont = content.Load<SpriteFont>("Fonts/Hud");
-            
+            layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
 
             // Load overlay textures
             winOverlay = content.Load<Texture2D>("Overlays/you_win");
@@ -189,8 +189,7 @@ namespace ElfosVsOrcos
             LoadNextLevel();
         }
 
-        Viewport view;
-        
+        private Texture2D layers;
         public override void Draw(GameTime gameTime)
         {
             
@@ -198,8 +197,9 @@ namespace ElfosVsOrcos
             // This game has a blue background. Why? Because!
             ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,Color.CornflowerBlue, 0, 0);
             // Our player and enemy are both actually just text strings.
+
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            
+            /*
             spriteBatch.Begin(SpriteSortMode.BackToFront,
                         BlendState.AlphaBlend,
                         null,
@@ -207,14 +207,26 @@ namespace ElfosVsOrcos
                         null,
                         null,
                         cam.get_transformation(ScreenManager.GraphicsDevice));
-            
-            
-            level.Draw(gameTime, spriteBatch);
 
-            DrawHud(spriteBatch);
+             */
+            spriteBatch.Begin();
+           
+            //for (int i = 0; i < layers.Length; ++i)
+            //{
+                // Choose a random segment if each background layer for level variety.
+            //    int segmentIndex = levelIndex;
+            //layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
+            //}
+            
+            //
+DrawHud(spriteBatch);
+            level.Draw(gameTime, spriteBatch);
+            //spriteBatch.Draw(layers, Vector2.Zero, Color.Red);
+
+            //DrawHud(spriteBatch);
             
             spriteBatch.End();
-
+            
             // If the game is transitioning on or off, fade it out to black.
             if (TransitionPosition > 0 || pauseAlpha > 0)
             {
@@ -250,7 +262,7 @@ namespace ElfosVsOrcos
 
             // Draw score
             float timeHeight = hudFont.MeasureString(timeString).Y;
-            DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Black);
+            DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Azure);
             //Console.WriteLine(hudLocation);
             // Determine the status overlay message to show.
             Texture2D status = null;
@@ -280,7 +292,7 @@ namespace ElfosVsOrcos
 
         private void DrawShadowedString(SpriteBatch spriteBatch, SpriteFont font, string value, Vector2 position, Color color)
         {
-            //spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.Black);
+            spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.Black);
             spriteBatch.DrawString(font, value, position, color);
         }
     }
