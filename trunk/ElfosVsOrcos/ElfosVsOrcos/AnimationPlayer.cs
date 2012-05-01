@@ -69,7 +69,7 @@ namespace ElfosVsOrcos
         /// <summary>
         /// Advances the time position and draws the current frame of the animation.
         /// </summary>
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position, SpriteEffects spriteEffects,Color colormono)
         {
             if (Animation == null)
                 throw new NotSupportedException("No animation is currently playing.");
@@ -97,7 +97,7 @@ namespace ElfosVsOrcos
             Rectangle source = new Rectangle(FrameIndex * Animation.FrameWidth, 0, Animation.FrameWidth, Animation.Texture.Height);
 
             // Draw the current frame.
-            spriteBatch.Draw(Animation.Texture, position, source, Color.White, 0.0f, Origin, 1.0f, spriteEffects, 0.0f);
+            spriteBatch.Draw(Animation.Texture, position, source, colormono, 0.0f, Origin, 1.0f, spriteEffects, 0.0f);
         }
     }
 }

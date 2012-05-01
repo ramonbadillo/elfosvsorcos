@@ -204,7 +204,7 @@ namespace ElfosVsOrcos
 
                 // Various enemies
                 case 'O':
-                    return LoadOrcoTile(x, y, "MonsterA");
+                    return LoadOrcoTile(x, y, "MonsterO");
                 case 'H':
                    return LoadEnemyTile(x, y, "MonsterB");
                 case 'C':
@@ -227,6 +227,8 @@ namespace ElfosVsOrcos
                 // Impassable block
                 case '#':
                     return LoadVarietyTile("BlockA", 4, TileCollision.Impassable);
+                case 'M':
+                    return LoadTileM(x, y, "MonsterF");
 
                 case 'V':
                     return LoadFlyingEnemyTile(x, y, "MonsterF");
@@ -318,6 +320,15 @@ namespace ElfosVsOrcos
             enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 500));
 
             return new Tile(null, TileCollision.Passable);
+        }
+
+
+        private Tile LoadTileM(int x, int y, string spriteSet)
+        {
+            Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
+            enemiesFl.Add(new FlyingEnemy(this, position, spriteSet, 500));
+
+            return new Tile(null, TileCollision.Impassable);
         }
 
         private Tile LoadLatexEnemyTile(int x, int y, string spriteSet)
@@ -652,10 +663,9 @@ namespace ElfosVsOrcos
              
 
 
-            DrawTiles(spriteBatch);
+            
 
-            foreach (Gem gem in gems)
-                gem.Draw(gameTime, spriteBatch);
+            
 
             Player.Draw(gameTime, spriteBatch);
 
@@ -667,6 +677,12 @@ namespace ElfosVsOrcos
             
             foreach (LatexEnemy enemyLatex in enemiesLatex)
                 enemyLatex.Draw(gameTime, spriteBatch);
+            
+            
+            DrawTiles(spriteBatch);
+            
+            foreach (Gem gem in gems)
+                gem.Draw(gameTime, spriteBatch);
 
             //for (int i = EntityLayer + 1; i < layers.Length; ++i)
             //    spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
@@ -675,8 +691,9 @@ namespace ElfosVsOrcos
                 //spriteBatch.Draw(layers[0], Vector2.Zero, Color.Red);
                 //spriteBatch.Draw(layers[1], Vector2.Zero, Color.Blue);
 
-            for (int i = EntityLayer + 1; i < layers.Length; ++i)
-                spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
+            //for (int i = EntityLayer + 1; i < layers.Length; ++i)
+                //spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
+                //spriteBatch.Draw(layers[0], Vector2.Zero, Color.White);
 
         }
 

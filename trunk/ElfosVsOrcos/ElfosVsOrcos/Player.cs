@@ -20,7 +20,7 @@ namespace ElfosVsOrcos
     /// </summary>
     class Player
     {
-        private int Vida=10;
+        public int Vida=10;
 
         // Animations
         private Animation idleAnimation;
@@ -79,7 +79,7 @@ namespace ElfosVsOrcos
         private const float AirDragFactor = 0.58f;
 
         // Constants for controlling vertical movement
-        private const float MaxJumpTime = 0.3f;
+        private const float MaxJumpTime = 0.35f;
         private const float JumpLaunchVelocity = -3500.0f;
         private const float GravityAcceleration = 3400.0f;
         private const float MaxFallSpeed = 550.0f;
@@ -227,7 +227,20 @@ namespace ElfosVsOrcos
             KeyboardState keyboardState, 
             GamePadState gamePadState)
         {
-            
+            if(colormono==Color.Red)
+            ti++;
+            if (ti == 10)
+                isAtacando = false;
+            if (ti == 20)
+            {
+                ti = 0;
+                colormono = Color.White;
+                GamePad.SetVibration(PlayerIndex.One, 0, 0);
+                
+            }
+
+
+            Console.WriteLine(ti);
                 // Get analog horizontal movement.
                 movement = gamePadState.ThumbSticks.Left.X * MoveStickScale;
 
@@ -249,15 +262,22 @@ namespace ElfosVsOrcos
                 {
                     movement = 1.0f;
                 }
-
+                
+                
                 isAtacando = keyboardState.IsKeyDown(Keys.Space)||
                     gamePadState.IsButtonDown(Buttons.B);
+                
                 //Console.WriteLine(isAtacando);
                 // Check if the player wants to jump.
                 isJumping =
                     gamePadState.IsButtonDown(JumpButton) ||
                     keyboardState.IsKeyDown(Keys.Up) ||
                     keyboardState.IsKeyDown(Keys.W);
+
+                if (gamePadState.IsButtonDown(Buttons.Y))
+                    GamePad.SetVibration(PlayerIndex.One, 0f, 0f);
+                if (gamePadState.IsButtonDown(Buttons.X))
+                    GamePad.SetVibration(PlayerIndex.One, 1f, 1f);
             
         }
 
@@ -302,6 +322,7 @@ namespace ElfosVsOrcos
         }
 
         public void Atacar(GameTime gameTime) {
+            
             if (isAtacando)
                 sprite.PlayAnimation(atackAnimation);
         }
@@ -351,6 +372,7 @@ namespace ElfosVsOrcos
                 {
                     // Reached the apex of the jump
                     jumpTime = 0.0f;
+
                 }
             }
             else
@@ -371,6 +393,7 @@ namespace ElfosVsOrcos
         /// </summary>
         private void HandleCollisions()
         {
+            
             // Get the player's bounding rectangle and find neighboring tiles.
             Rectangle bounds = BoundingRectangle;
             int leftTile = (int)Math.Floor((float)bounds.Left / Tile.Width);
@@ -439,6 +462,8 @@ namespace ElfosVsOrcos
         /// The enemy who killed the player. This parameter is null if the player was
         /// not killed by an enemy (fell into a hole).
         /// </param>
+        /// 
+        int ti = 0;
         public void OnKilled(Enemy killedBy)
         {
             if (Vida <= 0)
@@ -446,7 +471,10 @@ namespace ElfosVsOrcos
                 isAlive = false;
 
                 if (killedBy != null)
+                {
                     killedSound.Play();
+                    colormono = Color.Black;
+                }
                 else
                     fallSound.Play();
             }
@@ -455,27 +483,78 @@ namespace ElfosVsOrcos
                 if (killedBy != null)
                 {
                     Vida--;
+                    colormono = Color.Red;
                     killedSound.Play();
+                    GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
                     if (Velocity.X > 0)
+                    {
                         Position = new Vector2(Position.X - 50, Position.Y);
+
+                    }
                     else if (Velocity.X < 0)
                         Position = new Vector2(Position.X + 50, Position.Y);
                 }
             }
             if (killedBy == null)
                 isAlive = false;
+            if (ti == 100) {
+                ti = 0;
+                GamePad.SetVibration(PlayerIndex.One, 0,0);
+            }
+                
             //sprite.PlayAnimation(dieAnimation);
         }
+        
         public void OnKilled(FlyingEnemy killedByFl)
         {
-            isAlive = false;
+            Console.WriteLine(ti);
+            //if(colormono==Color.Red)
+            //ti++;
+            if (Vida <= 0)
+            {
+                isAlive = false;
 
-            if (killedByFl != null)
-                killedSound.Play();
+                if (killedByFl != null)
+                {
+                    killedSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                }
+                else
+                {
+                    fallSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                }
+            }
             else
-                fallSound.Play();
+            {
+                if (killedByFl != null)
+                {
+                    Vida--;
+                    
+                    Console.WriteLine(ti);
+                    colormono = Color.Red;
+                    killedSound.Play();
+                    GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
+                    if (Velocity.X > 0)
+                    {
+                        Position = new Vector2(Position.X - 50, Position.Y);
 
-            //sprite.PlayAnimation(dieAnimation);
+                    }
+                    else if (Velocity.X < 0)
+                        Position = new Vector2(Position.X + 50, Position.Y);
+                }
+            }
+            if (killedByFl == null)
+                isAlive = false;
+            if (ti == 100)
+            {
+                ti = 0;
+                colormono = Color.White;
+                GamePad.SetVibration(PlayerIndex.One, 0, 0);
+            }
+                
         }
         public void OnKilled(LatexEnemy killedByLatex)
         {
@@ -488,7 +567,7 @@ namespace ElfosVsOrcos
 
             //sprite.PlayAnimation(dieAnimation);
         }
-
+        private Color colormono=Color.White;
         /// <summary>
         /// Called when this player reaches the level's exit.
         /// </summary>
@@ -510,7 +589,7 @@ namespace ElfosVsOrcos
 
             // Draw that sprite.
             if(this.isAlive)
-                sprite.Draw(gameTime, spriteBatch, Position, flip);
+                sprite.Draw(gameTime, spriteBatch, Position, flip,colormono);
         }
     }
 }
