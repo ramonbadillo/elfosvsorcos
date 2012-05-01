@@ -64,8 +64,8 @@ namespace ElfosVsOrcos
 
             // Load fonts
             hudFont = content.Load<SpriteFont>("Fonts/Hud");
-            layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
-
+            //layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
+            fondo = this.content.Load<Texture2D>("Backgrounds/Layer0_0");
             // Load overlay textures
             winOverlay = content.Load<Texture2D>("Overlays/you_win");
             loseOverlay = content.Load<Texture2D>("Overlays/you_lose");
@@ -189,17 +189,17 @@ namespace ElfosVsOrcos
             LoadNextLevel();
         }
 
-        private Texture2D layers;
+        private Texture2D fondo;
         public override void Draw(GameTime gameTime)
         {
             
 
             // This game has a blue background. Why? Because!
-            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,Color.CornflowerBlue, 0, 0);
+            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,Color.Aquamarine, 0, 0);
             // Our player and enemy are both actually just text strings.
 
             SpriteBatch spriteBatch = ScreenManager.SpriteBatch;
-            /*
+            
             spriteBatch.Begin(SpriteSortMode.BackToFront,
                         BlendState.AlphaBlend,
                         null,
@@ -208,21 +208,27 @@ namespace ElfosVsOrcos
                         null,
                         cam.get_transformation(ScreenManager.GraphicsDevice));
 
-             */
-            spriteBatch.Begin();
+             
+            //spriteBatch.Begin();
            
             //for (int i = 0; i < layers.Length; ++i)
             //{
                 // Choose a random segment if each background layer for level variety.
             //    int segmentIndex = levelIndex;
             //layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
+
+
+            
             //}
             
             //
-DrawHud(spriteBatch);
-            level.Draw(gameTime, spriteBatch);
-            //spriteBatch.Draw(layers, Vector2.Zero, Color.Red);
 
+            
+            level.Draw(gameTime, spriteBatch);
+//DrawHud(spriteBatch);
+            Console.WriteLine(cam.Pos.X / 2 + "," + cam.Pos.Y / 2);
+            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Red);
+            
             //DrawHud(spriteBatch);
             
             spriteBatch.End();

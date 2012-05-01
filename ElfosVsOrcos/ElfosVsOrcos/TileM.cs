@@ -25,7 +25,7 @@ namespace ElfosVsOrcos
     /// <summary>
     /// A monster who is impeding the progress of our fearless adventurer.
     /// </summary>
-    class FlyingEnemy
+    class TileM
     {
         public Level Level
         {
@@ -52,8 +52,6 @@ namespace ElfosVsOrcos
             {
                 int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-                //Console.WriteLine("x "+ Position.X);
-                //Console.WriteLine("y "+ Position.Y);
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
             }
@@ -87,7 +85,7 @@ namespace ElfosVsOrcos
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public FlyingEnemy(Level level, Vector2 position, string spriteSet,int TES)
+        public TileM(Level level, Vector2 position, string spriteSet,int TES)
         {
             this.level = level;
             this.position = position;
@@ -127,6 +125,7 @@ namespace ElfosVsOrcos
         public void Update(GameTime gameTime)
         {
 
+
             i++;
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (i > TES)
@@ -135,7 +134,13 @@ namespace ElfosVsOrcos
                 i = 0;
 
             }
-            
+            else
+            {
+                // Move in the current direction.
+                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
+                position = position + velocity;
+            }
+            /*
             elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Calculate tile position based on the side we are walking towards.
@@ -167,6 +172,7 @@ namespace ElfosVsOrcos
                     position = position + velocity;
                 }
             }
+             */
         }
 
         /// <summary>
