@@ -34,18 +34,6 @@ namespace ElfosVsOrcos
         }
         Vector2 position;
 
-        public Rectangle Vision
-        {
-            get
-            {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X -200;
-                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-                
-                return new Rectangle(left, top, localBounds.Width+200, localBounds.Height);
-            }
-        }
-
-
         private Rectangle localBounds;
         /// <summary>
         /// Gets a rectangle which bounds this enemy in world space.
@@ -58,6 +46,17 @@ namespace ElfosVsOrcos
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
+            }
+        }
+
+        public Rectangle Vision
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X - 200;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+
+                return new Rectangle(left, top, localBounds.Width + 200, localBounds.Height);
             }
         }
 
