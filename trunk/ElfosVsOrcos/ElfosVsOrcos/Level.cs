@@ -528,7 +528,7 @@ namespace ElfosVsOrcos
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
-                    if (!Player.isAttacking)
+                    if (!Player.isInAttacking)
                         OnPlayerKilled(enemy);
                     else
                         muertos.Add(enemy);
@@ -553,7 +553,7 @@ namespace ElfosVsOrcos
                         
                     }
 
-                    if (!Player.isAttacking)
+                    if (!Player.isInAttacking)
                         OnPlayerKilledFl(enemyFl);
                     else
                         muertosFl.Add(enemyFl);
@@ -578,7 +578,7 @@ namespace ElfosVsOrcos
 
                     }
 
-                    if (!Player.isAttacking)
+                    if (!Player.isInAttacking)
                         OnPlayerKilledLatex(enemyLatex);
                     else
                         muertosLatex.Add(enemyLatex);
@@ -597,7 +597,7 @@ namespace ElfosVsOrcos
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
-                    if (!Player.isAttacking)
+                    if (!Player.isInAttacking)
                         OnPlayerKilledOrco(enemy);
                     else
                         muertosOrcos.Add(enemy);
