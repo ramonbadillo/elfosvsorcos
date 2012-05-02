@@ -96,6 +96,8 @@ namespace ElfosVsOrcos
         /// <param name="fileStream">
         /// A stream containing the tile data.
         /// </param>
+        /// 
+
         public Level(IServiceProvider serviceProvider, Stream fileStream, int levelIndex)
         {
             // Create a new content manager to load content used just by this level.
@@ -419,6 +421,11 @@ namespace ElfosVsOrcos
 
 
         Camara cam;
+
+        public Vector2 getCam() {
+            return cam._pos;
+        }
+
         public void Update(GameTime gameTime, KeyboardState keyboardState, GamePadState gamePadState,SpriteBatch sprites,Camara cam, ScreenManager screen){
             this.cam = cam;
             if (keyboardState.IsKeyDown(Keys.T)) {
@@ -515,16 +522,24 @@ namespace ElfosVsOrcos
         public void addOrc(Orcos orco) {
             enemiesOrco.Add(orco);
         }
+        public void delHalcon(Enemy hal)
+        {
+            //enemiesHalcon.Add(hal);
+            
+            muertos.Add(hal);
+        }
 
         /// <summary>
         /// Animates each enemy and allow them to kill the player.
         /// </summary>
-        private void UpdateEnemies(GameTime gameTime)
-        {   
-            List<Enemy> muertos = new List<Enemy>();
+        /// 
+List<Enemy> muertos = new List<Enemy>();
             List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
             List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
             List<Orcos> muertosOrcos = new List<Orcos>();
+        private void UpdateEnemies(GameTime gameTime)
+        {   
+            
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
