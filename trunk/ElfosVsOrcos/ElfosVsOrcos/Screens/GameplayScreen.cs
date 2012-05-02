@@ -22,6 +22,7 @@ namespace ElfosVsOrcos
         private Texture2D winOverlay;
         private Texture2D loseOverlay;
         private Texture2D diedOverlay;
+        private Texture2D corazon;
 
         // Meta-level game state.
         private int levelIndex = -1;
@@ -70,6 +71,7 @@ namespace ElfosVsOrcos
             winOverlay = content.Load<Texture2D>("Overlays/you_win");
             loseOverlay = content.Load<Texture2D>("Overlays/you_lose");
             diedOverlay = content.Load<Texture2D>("Overlays/you_died");
+            corazon = content.Load<Texture2D>("Overlays/Heart");
 
             //Known issue that you get exceptions if you use Media PLayer while connected to your PC
             //See http://social.msdn.microsoft.com/Forums/en/windowsphone7series/thread/c8a243d2-d360-46b1-96bd-62b1ef268c66
@@ -224,12 +226,14 @@ namespace ElfosVsOrcos
             //
 
             DrawHud(spriteBatch);
+
             level.Draw(gameTime, spriteBatch);
-            
+
+            DrawHud(spriteBatch);
             //Console.WriteLine(cam.Pos.X / 2 + "," + cam.Pos.Y / 2);
-            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Yellow);
+            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Gray);
             
-            //DrawHud(spriteBatch);
+            DrawHud(spriteBatch);
             
             spriteBatch.End();
             
@@ -242,7 +246,7 @@ namespace ElfosVsOrcos
             }
         }
 
-        string VIDAS="LIFE:";
+        string VIDAS="LIVES:";
         private void DrawHud(SpriteBatch spriteBatch)
         {
             Rectangle titleSafeArea = ScreenManager.GraphicsDevice.Viewport.TitleSafeArea;
@@ -266,16 +270,24 @@ namespace ElfosVsOrcos
                 timeColor = Color.Red;
             }
             //Console.WriteLine("" + level.getLifePlayer());
-
-            DrawShadowedString(spriteBatch, hudFont, timeString, hudLocation, timeColor);
-            //
             float timeHeight = hudFont.MeasureString(timeString).Y;
 
-            DrawShadowedString(spriteBatch, hudFont,level.getLifePlayer()+VIDAS, hudLocation+ new Vector2(0.0f, 2*timeHeight * 1.2f), timeColor);
 
-            // Draw score
-            
+            DrawShadowedString(spriteBatch, hudFont,level.getLifePlayer()+VIDAS, hudLocation+ new Vector2((ScreenManager.GraphicsDevice.Viewport.Width -100),0.0f), timeColor);
+            for (int c = 0; c <= level.getLifePlayer(); c++) {
+                
+                spriteBatch.Draw(corazon, hudLocation + new Vector2((ScreenManager.GraphicsDevice.Viewport.Width -10)-(c*10f), timeHeight * 1.2f), Color.White);
+            }
+
+
+
+
+
+
+                // Draw Strings
+            DrawShadowedString(spriteBatch, hudFont, timeString, hudLocation, timeColor);
             DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Azure);
+            
             //Console.WriteLine(hudLocation);
             // Determine the status overlay message to show.
             Texture2D status = null;
@@ -298,14 +310,14 @@ namespace ElfosVsOrcos
             if (status != null)
             {
                 // Draw status message.
-                Vector2 statusSize = new Vector2(status.Width, status.Height);
-                spriteBatch.Draw(status, center - statusSize / 2, Color.White);
+                Vector2 statusSize = new Vector2(cam._pos.X - (status.Width / 2), cam._pos.Y - (status.Height / 2));
+                spriteBatch.Draw(status, statusSize, Color.White);
             }
         }
 
         private void DrawShadowedString(SpriteBatch spriteBatch, SpriteFont font, string value, Vector2 position, Color color)
         {
-            spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.Black);
+            spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.White);
             //spriteBatch.DrawString(font, value, position, color);
         }
     }

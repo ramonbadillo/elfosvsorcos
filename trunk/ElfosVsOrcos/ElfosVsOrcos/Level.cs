@@ -28,7 +28,6 @@ namespace ElfosVsOrcos
     {
 
 
-        float pos = 0;
         // Physical structure of the level.
         private Tile[,] tiles;
         private Texture2D[] layers;
@@ -226,7 +225,7 @@ namespace ElfosVsOrcos
 
                 // Impassable block
                 case '#':
-                    return LoadVarietyTile("BlockA", 4, TileCollision.Impassable);
+                    return LoadVarietyTile("BlockA", 2, TileCollision.Impassable);
                 case 'M':
                     return LoadTileM(x, y, "MonsterF");
 
@@ -441,13 +440,13 @@ namespace ElfosVsOrcos
                 if (keyboardState.IsKeyDown(Keys.Right) || gamePadState.IsButtonDown(Buttons.DPadRight) || gamePadState.IsButtonDown(Buttons.LeftThumbstickRight))
                 {
                     //player.position.X = player.position.X - 4.5f;
-                    cam.MoveRight(3.6f);
+                    cam.MoveRight(3.8f);
                 }
             if (cam.Pos.X -player.Position.X   > 300)
                 if (keyboardState.IsKeyDown(Keys.Left) || gamePadState.IsButtonDown(Buttons.DPadLeft) || gamePadState.IsButtonDown(Buttons.LeftThumbstickLeft))
                 {
                     //player.position.X = player.position.X - 4.5f;
-                    cam.MoveLeft(3.6f);
+                    cam.MoveLeft(3.8f);
                 }
             
             
@@ -532,7 +531,7 @@ namespace ElfosVsOrcos
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
-                    if (!Player.isAtacando)
+                    if (!Player.isAttacking)
                         OnPlayerKilled(enemy);
                     else
                         muertos.Add(enemy);
@@ -557,7 +556,7 @@ namespace ElfosVsOrcos
                         
                     }
 
-                    if (!Player.isAtacando)
+                    if (!Player.isAttacking)
                         OnPlayerKilledFl(enemyFl);
                     else
                         muertosFl.Add(enemyFl);
@@ -582,7 +581,7 @@ namespace ElfosVsOrcos
 
                     }
 
-                    if (!Player.isAtacando)
+                    if (!Player.isAttacking)
                         OnPlayerKilledLatex(enemyLatex);
                     else
                         muertosLatex.Add(enemyLatex);
