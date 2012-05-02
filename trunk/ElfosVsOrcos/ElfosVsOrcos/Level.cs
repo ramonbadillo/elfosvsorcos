@@ -45,7 +45,7 @@ namespace ElfosVsOrcos
         private List<Enemy> enemies = new List<Enemy>();
         private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
         private List<LatexEnemy> enemiesLatex = new List<LatexEnemy>();
-        private List<Orco> enemiesOrco = new List<Orco>();
+         private List<Orcos> enemiesOrco = new List<Orcos>();
         
 
         // Key locations in the level.        
@@ -203,13 +203,9 @@ namespace ElfosVsOrcos
 
                 // Various enemies
                 case 'O':
-                    return LoadOrcoTile(x, y, "MonsterO");
+                    return LoadOrcoTile(x, y, "Orco");
                 case 'H':
-                   return LoadEnemyTile(x, y, "MonsterB");
-                case 'C':
-                    return LoadEnemyTile(x, y, "MonsterC");
-                case 'D':
-                    return LoadEnemyTile(x, y, "MonsterA");
+                   return LoadEnemyTile(x, y, "Halcon");
 
                 // Platform block
                 case '~':
@@ -227,14 +223,14 @@ namespace ElfosVsOrcos
                 case '#':
                     return LoadVarietyTile("BlockA", 2, TileCollision.Impassable);
                 case 'M':
-                    return LoadTileM(x, y, "MonsterF");
+                    return LoadTileM(x, y, "Volador");
 
                 case 'V':
-                    return LoadFlyingEnemyTile(x, y, "MonsterF");
+                    return LoadFlyingEnemyTile(x, y, "Volador");
                 // Unknown tile type character
 
                 case 'L':
-                    return LoadLatexEnemyTile(x, y, "MonsterC");
+                    return LoadLatexEnemyTile(x, y, "Latex");
                 // Unknown tile type character
 
                 default:
@@ -341,7 +337,7 @@ namespace ElfosVsOrcos
         private Tile LoadOrcoTile(int x, int y, string spriteSet)
         {
             Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
-            enemiesOrco.Add(new Orco(this, position, spriteSet));
+            enemiesOrco.Add(new Orcos(this, position, spriteSet,10));
 
             return new Tile(null, TileCollision.Passable);
         }
@@ -682,6 +678,9 @@ namespace ElfosVsOrcos
             
             foreach (LatexEnemy enemyLatex in enemiesLatex)
                 enemyLatex.Draw(gameTime, spriteBatch);
+
+            foreach (Orcos enemyOrco in enemiesOrco)
+                enemyOrco.Draw(gameTime, spriteBatch);
             
             
             DrawTiles(spriteBatch);
