@@ -662,7 +662,61 @@ namespace ElfosVsOrcos
                 isAlive = false;
             }
         }
-        
+
+
+        public void OnKilled(Orcos killedBy)
+        {
+            if (Vida <= 0)
+            {
+                isAlive = false;
+
+                if (killedBy != null)
+                {
+                    killedSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                }
+                else
+                {
+                    fallSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                    isAlive = false;
+                }
+            }
+            else
+            {
+                if (killedBy != null)
+                {
+                    Vida--;
+
+                    //Console.WriteLine(ti);
+                    colormono = Color.Red;
+                    killedSound.Play();
+                    GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
+                    if (Velocity.X > 0)
+                        Position = new Vector2(Position.X - 50, Position.Y);
+                    else if (Velocity.X < 0)
+                        Position = new Vector2(Position.X + 50, Position.Y);
+
+                    if (Velocity.Y > 0)
+                        Position = new Vector2(Position.X, Position.Y - 50);
+                    else if (Velocity.Y < 0)
+                        Position = new Vector2(Position.X, Position.Y + 50);
+                }
+            }
+            if (killedBy == null)
+            {
+                fallSound.Play();
+                ti = 0;
+                Vida = 10;
+                isAlive = false;
+            }
+        }
+
+
+
+
         /// <summary>
         /// Called when this player reaches the level's exit.
         /// </summary>
@@ -687,4 +741,5 @@ namespace ElfosVsOrcos
                 sprite.Draw(gameTime, spriteBatch, Position, flip,colormono);
         }
     }
+
 }
