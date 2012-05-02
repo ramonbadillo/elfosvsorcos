@@ -14,15 +14,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace ElfosVsOrcos
 {
     /// <summary>
-    /// Facing direction along the X axis.
-    /// </summary>
-    //enum FaceDirection
-    //{
-    //    Left = -1,
-    //    Right = 1,
-    //}
-
-    /// <summary>
     /// A monster who is impeding the progress of our fearless adventurer.
     /// </summary>
     class LatexEnemy
@@ -33,6 +24,7 @@ namespace ElfosVsOrcos
         }
         Level level;
 
+
         /// <summary>
         /// Position in world space of the bottom center of this enemy.
         /// </summary>
@@ -42,6 +34,18 @@ namespace ElfosVsOrcos
         }
         Vector2 position;
 
+        public Rectangle Vision
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X -200;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+                
+                return new Rectangle(left, top, localBounds.Width+200, localBounds.Height);
+            }
+        }
+
+
         private Rectangle localBounds;
         /// <summary>
         /// Gets a rectangle which bounds this enemy in world space.
@@ -50,10 +54,8 @@ namespace ElfosVsOrcos
         {
             get
             {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-                //Console.WriteLine("x "+ Position.X);
-                //Console.WriteLine("y "+ Position.Y);
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
             }
@@ -69,29 +71,22 @@ namespace ElfosVsOrcos
         /// </summary>
         private FaceDirection direction = FaceDirection.Left;
 
-        /// <summary>
-        /// How long this enemy has been waiting before turning around.
-        /// </summary>
-        private float waitTime;
+        
 
-        /// <summary>
-        /// How long to wait before turning around.
-        /// </summary>
-        private const float MaxWaitTime = 1f;
 
         /// <summary>
         /// The speed at which this enemy moves along the X axis.
         /// </summary>
-        private const float MoveSpeed = 50.0f;
+        private const float MoveSpeed = 64.0f;
 
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public LatexEnemy(Level level, Vector2 position, string spriteSet,int TES)
+        public LatexEnemy(Level level, Vector2 position, string spriteSet, int EAS)
         {
             this.level = level;
             this.position = position;
-            this.TES = TES;
+
             LoadContent(spriteSet);
         }
 
@@ -100,33 +95,13 @@ namespace ElfosVsOrcos
         /// </summary>
         public void LoadContent(string spriteSet)
         {
-            // Load animations.
-            spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,32);
-            //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.08f, true,32);
-            sprite.PlayAnimation(idleAnimation);
 
-            // Calculate bounds within texture size.
-            int width = (int)(runAnimation.FrameWidth * 0.4);
-            int left = (runAnimation.FrameWidth - width) / 2;
-            int height = (int)(runAnimation.FrameWidth * 0.7);
-            int top = runAnimation.FrameHeight - height;
-            localBounds = new Rectangle(left, top, width, height);
-            
-        }
-        /*
-        public void LoadContent2(string spriteSet, string spriteSet2)
-        {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            spriteSet2 = "Sprites/" + spriteSet2 + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "run"), 0.08f, true, 68);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true, 32);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, false, 80);
-            //Console.WriteLine(spriteSet + "Idle");
-            //Console.WriteLine(spriteSet2 + "vuela");
-            sprite.PlayAnimation(runAnimation);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 32);
+            sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
             int width = (int)(idleAnimation.FrameWidth * 0.4);
@@ -136,7 +111,6 @@ namespace ElfosVsOrcos
             localBounds = new Rectangle(left, top, width, height);
 
         }
-        */
 
 
         /// <summary>
@@ -144,50 +118,30 @@ namespace ElfosVsOrcos
         /// </summary>
         /// 
         int i = 0;
-        int TES;
         public void Update(GameTime gameTime)
         {
 
-            i++;
-            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (i > TES)
-            {
-                direction = (FaceDirection)(-(int)direction);
-                i = 0;
-
-            }
             
-            elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Calculate tile position based on the side we are walking towards.
             float posX = Position.X + localBounds.Width / 2 * (int)direction;
             int tileX = (int)Math.Floor(posX / Tile.Width) - (int)direction;
             int tileY = (int)Math.Floor(Position.Y / Tile.Height);
 
-            if (waitTime > 0)
+
+                    //Review if the player is near of the latex enemy
+            if (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right)
             {
-                // Wait for some amount of time.
-                waitTime = Math.Max(0.0f, waitTime - (float)gameTime.ElapsedGameTime.TotalSeconds);
-                if (waitTime <= 0.0f)
-                {
-                    // Then turn around.
-                    direction = (FaceDirection)(-(int)direction);
-                }
+                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
+                position = position + velocity;
             }
-            else
-            {
-                // If we are about to run into a wall or off a cliff, start waiting.
-                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable)
-                {
-                    waitTime = MaxWaitTime;
-                }
-                else
-                {
-                    // Move in the current direction.
-                    Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
-                    position = position + velocity;
-                }
-            }
+            else if (level.Player.BoundingRectangle.Left >= this.Vision.Right && level.Player.BoundingRectangle.Left <= this.Vision.Right+200)
+                    {
+                        Vector2 velocity = new Vector2(-(int)direction * MoveSpeed * elapsed, 0.0f);
+                        position = position + velocity;
+                    }
+
         }
 
         /// <summary>
@@ -198,8 +152,7 @@ namespace ElfosVsOrcos
             // Stop running when the game is paused or before turning around.
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
-                Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0)
+                Level.TimeRemaining == TimeSpan.Zero)
             {
                 sprite.PlayAnimation(idleAnimation);
             }
@@ -211,7 +164,7 @@ namespace ElfosVsOrcos
 
             // Draw facing the way the enemy is moving.
             SpriteEffects flip = direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            sprite.Draw(gameTime, spriteBatch, Position, flip,Color.White);
+            sprite.Draw(gameTime, spriteBatch, Position, flip, Color.White);
         }
     }
 }
