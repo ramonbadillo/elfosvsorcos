@@ -135,6 +135,8 @@ namespace ElfosVsOrcos
 
         private Color colormono = Color.White;
 
+        private bool derecha;
+        
 
         /// <summary>
         /// Constructors a new player.
@@ -250,7 +252,10 @@ namespace ElfosVsOrcos
                 GamePad.SetVibration(PlayerIndex.One, 0, 0);
                 
             }
-
+            if (Velocity.X > 0)
+                derecha = false;
+            else if (Velocity.X < 0)
+                derecha = true;
 
             //Console.WriteLine(ti);
                 // Get analog horizontal movement.
@@ -347,6 +352,7 @@ namespace ElfosVsOrcos
                     if (attackTime == 0.0f)
                     {
                         jumpSound.Play();
+                        wasAttacking = true;
                         //sprite.PlayAnimation(atackAnimation);
                         //Console.WriteLine("ataca");
                     }
@@ -359,13 +365,18 @@ namespace ElfosVsOrcos
                 {
                     sprite.PlayAnimation(atackAnimation);
                     Console.WriteLine("ataca");
-                    isInAttacking = isAttacking;
-                }else
-                    attackTime = 0.0f;
+                    //isInAttacking = isAttacking;
+                    
+                }
+                else { 
+                attackTime = 0.0f;
+                wasAttacking = false;
+                }
+                    
             }
             else
                 attackTime = 0.0f;
-            wasAttacking = isAttacking;
+            //wasAttacking = true;
             isInAttacking = isAttacking;
                 
         }
@@ -513,6 +524,7 @@ namespace ElfosVsOrcos
         int ti = 0;
         public void OnKilled(Enemy killedBy)
         {
+
             if (Vida <= 0)
             {
                 isAlive = false;
@@ -541,13 +553,15 @@ namespace ElfosVsOrcos
                     colormono = Color.Red;
                     killedSound.Play();
                     GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
-                    if (Velocity.X > 0)
-                    {
+                    if (!derecha)
                         Position = new Vector2(Position.X - 50, Position.Y);
-
-                    }
-                    else if (Velocity.X < 0)
+                    else if (derecha)
                         Position = new Vector2(Position.X + 50, Position.Y);
+
+                    if (Velocity.Y > 0)
+                        Position = new Vector2(Position.X, Position.Y - 50);
+                    else if (Velocity.Y < 0)
+                        Position = new Vector2(Position.X, Position.Y + 50);
                 }
             }
             if (killedBy == null)
@@ -559,12 +573,9 @@ namespace ElfosVsOrcos
             }
             
         }
-
         public void OnKilled(FlyingEnemy killedBy)
         {
-            //Console.WriteLine(ti);
-            //if(colormono==Color.Red)
-            //ti++;
+
             if (Vida <= 0)
             {
                 isAlive = false;
@@ -588,18 +599,18 @@ namespace ElfosVsOrcos
                 if (killedBy != null)
                 {
                     Vida--;
-                    
+
                     //Console.WriteLine(ti);
                     colormono = Color.Red;
                     killedSound.Play();
                     GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
-                    if (Velocity.X > 0)
+                    if (!derecha)
                         Position = new Vector2(Position.X - 50, Position.Y);
-                    else if (Velocity.X < 0)
+                    else if (derecha)
                         Position = new Vector2(Position.X + 50, Position.Y);
 
                     if (Velocity.Y > 0)
-                        Position = new Vector2(Position.X , Position.Y- 50);
+                        Position = new Vector2(Position.X, Position.Y - 50);
                     else if (Velocity.Y < 0)
                         Position = new Vector2(Position.X, Position.Y + 50);
                 }
@@ -615,6 +626,7 @@ namespace ElfosVsOrcos
         }
         public void OnKilled(LatexEnemy killedBy)
         {
+
             if (Vida <= 0)
             {
                 isAlive = false;
@@ -643,9 +655,9 @@ namespace ElfosVsOrcos
                     colormono = Color.Red;
                     killedSound.Play();
                     GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
-                    if (Velocity.X > 0)
+                    if (!derecha)
                         Position = new Vector2(Position.X - 50, Position.Y);
-                    else if (Velocity.X < 0)
+                    else if (derecha)
                         Position = new Vector2(Position.X + 50, Position.Y);
 
                     if (Velocity.Y > 0)
@@ -662,8 +674,6 @@ namespace ElfosVsOrcos
                 isAlive = false;
             }
         }
-
-
         public void OnKilled(Orcos killedBy)
         {
             if (Vida <= 0)
@@ -694,9 +704,9 @@ namespace ElfosVsOrcos
                     colormono = Color.Red;
                     killedSound.Play();
                     GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
-                    if (Velocity.X > 0)
+                    if (!derecha)
                         Position = new Vector2(Position.X - 50, Position.Y);
-                    else if (Velocity.X < 0)
+                    else if (derecha)
                         Position = new Vector2(Position.X + 50, Position.Y);
 
                     if (Velocity.Y > 0)
