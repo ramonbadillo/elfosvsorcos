@@ -42,6 +42,7 @@ namespace ElfosVsOrcos
         private SoundEffect killedSound;
         private SoundEffect jumpSound;
         private SoundEffect fallSound;
+        //private SoundEffect attackSound;
 
         public Level Level
         {
@@ -106,9 +107,15 @@ namespace ElfosVsOrcos
 
         // Jumping state
         private bool isJumping;
-        public bool isAtacando;
         private bool wasJumping;
         private float jumpTime;
+
+
+        private const float MaxAttackTime = 0.1f;
+        public bool isAttacking;
+        public bool wasAttacking;
+        public float attackTime=0.0f;
+
 
         private Rectangle localBounds;
         /// <summary>
@@ -125,9 +132,13 @@ namespace ElfosVsOrcos
             }
         }
 
+        private Color colormono = Color.White;
+
+
         /// <summary>
         /// Constructors a new player.
         /// </summary>
+        /// 
         public Player(Level level, Vector2 position)
         {
             this.level = level;
@@ -164,6 +175,7 @@ namespace ElfosVsOrcos
             killedSound = Level.Content.Load<SoundEffect>("Sounds/PlayerKilled");
             jumpSound = Level.Content.Load<SoundEffect>("Sounds/PlayerJump");
             fallSound = Level.Content.Load<SoundEffect>("Sounds/PlayerFall");
+            //attackSound = Level.Content.Load<SoundEffect>("Sounds/PlayerAttack");
         }
 
         /// <summary>
@@ -203,7 +215,7 @@ namespace ElfosVsOrcos
                 {
                     sprite.PlayAnimation(runAnimation);
                 }
-                else if (isAtacando)
+                else if (isAttacking)
                 {
                     sprite.PlayAnimation(atackAnimation);
                     //killedSound.Play();
@@ -229,8 +241,6 @@ namespace ElfosVsOrcos
         {
             if(colormono==Color.Red)
             ti++;
-            if (ti == 10)
-                isAtacando = false;
             if (ti == 20)
             {
                 ti = 0;
@@ -262,9 +272,9 @@ namespace ElfosVsOrcos
                 {
                     movement = 1.0f;
                 }
-                
-                
-                isAtacando = keyboardState.IsKeyDown(Keys.Space)||
+
+
+                isAttacking = keyboardState.IsKeyDown(Keys.Space) ||
                     gamePadState.IsButtonDown(Buttons.B);
                 
                 //Console.WriteLine(isAtacando);
@@ -321,10 +331,31 @@ namespace ElfosVsOrcos
                 velocity.Y = 0;
         }
 
-        public void Atacar(GameTime gameTime) {
-            
-            if (isAtacando)
-                sprite.PlayAnimation(atackAnimation);
+        public void DoAttack(GameTime gameTime)
+        {
+
+            if (isAttacking)
+            {
+                if (!wasAttacking || attackTime > 0.0f)
+                {
+                    Console.WriteLine("" + attackTime);
+
+                    if (attackTime == 0.0f)
+                    {
+                        jumpSound.Play();
+                        Console.WriteLine("ataca");
+                    }
+
+                    attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    sprite.PlayAnimation(atackAnimation);
+                }
+                //if (0.0f < jumpTime && jumpTime <= MaxJumpTime) { 
+                //}
+            }
+            else
+                attackTime = 0.0f;
+            wasAttacking = isAttacking;
+                
         }
 
         /// <summary>
@@ -356,7 +387,7 @@ namespace ElfosVsOrcos
                         jumpSound.Play();
 
                     jumpTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if(isAtacando)
+                    if (isAttacking)
                         sprite.PlayAnimation(atackAnimation);
                     else
                         sprite.PlayAnimation(jumpAnimation);
@@ -367,6 +398,10 @@ namespace ElfosVsOrcos
                 {
                     // Fully override the vertical velocity with a power curve that gives players more control over the top of the jump
                     velocityY = JumpLaunchVelocity * (1.0f - (float)Math.Pow(jumpTime / MaxJumpTime, JumpControlPower));
+                    if (isAttacking)
+                        sprite.PlayAnimation(atackAnimation);
+                    else
+                        sprite.PlayAnimation(jumpAnimation);
                 }
                 else
                 {
@@ -512,8 +547,7 @@ namespace ElfosVsOrcos
             }
             
         }
-        
-        public void OnKilled(FlyingEnemy killedByFl)
+        public void OnKilled(FlyingEnemy killedBy)
         {
             //Console.WriteLine(ti);
             //if(colormono==Color.Red)
@@ -522,7 +556,7 @@ namespace ElfosVsOrcos
             {
                 isAlive = false;
 
-                if (killedByFl != null)
+                if (killedBy != null)
                 {
                     killedSound.Play();
                     ti = 0;
@@ -538,7 +572,7 @@ namespace ElfosVsOrcos
             }
             else
             {
-                if (killedByFl != null)
+                if (killedBy != null)
                 {
                     Vida--;
                     
@@ -547,15 +581,17 @@ namespace ElfosVsOrcos
                     killedSound.Play();
                     GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
                     if (Velocity.X > 0)
-                    {
                         Position = new Vector2(Position.X - 50, Position.Y);
-
-                    }
                     else if (Velocity.X < 0)
                         Position = new Vector2(Position.X + 50, Position.Y);
+
+                    if (Velocity.Y > 0)
+                        Position = new Vector2(Position.X , Position.Y- 50);
+                    else if (Velocity.Y < 0)
+                        Position = new Vector2(Position.X, Position.Y + 50);
                 }
             }
-            if (killedByFl == null)
+            if (killedBy == null)
             {
                 fallSound.Play();
                 ti = 0;
@@ -564,18 +600,56 @@ namespace ElfosVsOrcos
             }
             
         }
-        public void OnKilled(LatexEnemy killedByLatex)
+        public void OnKilled(LatexEnemy killedBy)
         {
-            isAlive = false;
+            if (Vida <= 0)
+            {
+                isAlive = false;
 
-            if (killedByLatex != null)
-                killedSound.Play();
+                if (killedBy != null)
+                {
+                    killedSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                }
+                else
+                {
+                    fallSound.Play();
+                    ti = 0;
+                    Vida = 10;
+                    isAlive = false;
+                }
+            }
             else
-                fallSound.Play();
+            {
+                if (killedBy != null)
+                {
+                    Vida--;
 
-            //sprite.PlayAnimation(dieAnimation);
+                    //Console.WriteLine(ti);
+                    colormono = Color.Red;
+                    killedSound.Play();
+                    GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
+                    if (Velocity.X > 0)
+                        Position = new Vector2(Position.X - 50, Position.Y);
+                    else if (Velocity.X < 0)
+                        Position = new Vector2(Position.X + 50, Position.Y);
+
+                    if (Velocity.Y > 0)
+                        Position = new Vector2(Position.X, Position.Y - 50);
+                    else if (Velocity.Y < 0)
+                        Position = new Vector2(Position.X, Position.Y + 50);
+                }
+            }
+            if (killedBy == null)
+            {
+                fallSound.Play();
+                ti = 0;
+                Vida = 10;
+                isAlive = false;
+            }
         }
-        private Color colormono=Color.White;
+        
         /// <summary>
         /// Called when this player reaches the level's exit.
         /// </summary>
