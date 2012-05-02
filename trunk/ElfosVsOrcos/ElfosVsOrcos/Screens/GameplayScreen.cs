@@ -223,11 +223,11 @@ namespace ElfosVsOrcos
             
             //
 
-            
+            DrawHud(spriteBatch);
             level.Draw(gameTime, spriteBatch);
-//DrawHud(spriteBatch);
-            Console.WriteLine(cam.Pos.X / 2 + "," + cam.Pos.Y / 2);
-            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Red);
+            
+            //Console.WriteLine(cam.Pos.X / 2 + "," + cam.Pos.Y / 2);
+            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Yellow);
             
             //DrawHud(spriteBatch);
             
@@ -242,7 +242,7 @@ namespace ElfosVsOrcos
             }
         }
 
-
+        string VIDAS="LIFE:";
         private void DrawHud(SpriteBatch spriteBatch)
         {
             Rectangle titleSafeArea = ScreenManager.GraphicsDevice.Viewport.TitleSafeArea;
@@ -253,6 +253,7 @@ namespace ElfosVsOrcos
             // Draw time remaining. Uses modulo division to cause blinking when the
             // player is running out of time.
             string timeString = "TIME: " + level.TimeRemaining.Minutes.ToString("00") + ":" + level.TimeRemaining.Seconds.ToString("00");
+
             Color timeColor;
             if (level.TimeRemaining > WarningTime ||
                 level.ReachedExit ||
@@ -264,10 +265,16 @@ namespace ElfosVsOrcos
             {
                 timeColor = Color.Red;
             }
+            //Console.WriteLine("" + level.getLifePlayer());
+
             DrawShadowedString(spriteBatch, hudFont, timeString, hudLocation, timeColor);
+            //
+            float timeHeight = hudFont.MeasureString(timeString).Y;
+
+            DrawShadowedString(spriteBatch, hudFont,level.getLifePlayer()+VIDAS, hudLocation+ new Vector2(0.0f, 2*timeHeight * 1.2f), timeColor);
 
             // Draw score
-            float timeHeight = hudFont.MeasureString(timeString).Y;
+            
             DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Azure);
             //Console.WriteLine(hudLocation);
             // Determine the status overlay message to show.
@@ -299,7 +306,7 @@ namespace ElfosVsOrcos
         private void DrawShadowedString(SpriteBatch spriteBatch, SpriteFont font, string value, Vector2 position, Color color)
         {
             spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.Black);
-            spriteBatch.DrawString(font, value, position, color);
+            //spriteBatch.DrawString(font, value, position, color);
         }
     }
 }
