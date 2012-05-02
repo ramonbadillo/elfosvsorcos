@@ -511,6 +511,10 @@ namespace ElfosVsOrcos
                 
             }
         }
+        
+        public void addOrc(Orcos orco) {
+            enemiesOrco.Add(orco);
+        }
 
         /// <summary>
         /// Animates each enemy and allow them to kill the player.
