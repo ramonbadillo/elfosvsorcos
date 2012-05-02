@@ -58,6 +58,17 @@ namespace ElfosVsOrcos
             }
         }
 
+        public Rectangle Vision
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X - 200;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+
+                return new Rectangle(left, top, localBounds.Width + 200, localBounds.Height);
+            }
+        }
+
         // Animations
         private Animation runAnimation;
         private Animation idleAnimation;

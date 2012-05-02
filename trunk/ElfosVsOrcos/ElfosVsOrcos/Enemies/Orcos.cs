@@ -50,6 +50,17 @@ namespace ElfosVsOrcos
             }
         }
 
+             public Rectangle Vision
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X -200;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+                
+                return new Rectangle(left, top, localBounds.Width+200, localBounds.Height);
+            }
+        }
+
         // Animations
         private Animation runAnimation;
         private Animation idleAnimation;
@@ -158,6 +169,7 @@ namespace ElfosVsOrcos
                     Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
                     position = position + velocity;
                 }
+
             }
         }
 
@@ -170,7 +182,7 @@ namespace ElfosVsOrcos
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
                 Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0)
+                waitTime > 0 || (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right))
             {
                 sprite.PlayAnimation(idleAnimation);
             }

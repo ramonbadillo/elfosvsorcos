@@ -337,7 +337,7 @@ namespace ElfosVsOrcos
         private Tile LoadOrcoTile(int x, int y, string spriteSet)
         {
             Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
-            enemiesOrco.Add(new Orcos(this, position, spriteSet,10));
+            enemiesOrco.Add(new Orcos(this, position, spriteSet,200));
 
             return new Tile(null, TileCollision.Passable);
         }
@@ -520,6 +520,7 @@ namespace ElfosVsOrcos
             List<Enemy> muertos = new List<Enemy>();
             List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
             List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
+            List<Orcos> muertosOrcos = new List<Orcos>();
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
@@ -563,7 +564,7 @@ namespace ElfosVsOrcos
                 enemiesFl.Remove(enemyFl);
             }
 
-            //para enemigos voladores
+            //para enemigos latex
 
             foreach (LatexEnemy enemyLatex in enemiesLatex)
             {
@@ -588,8 +589,30 @@ namespace ElfosVsOrcos
                 enemiesLatex.Remove(enemyLatex);
             }
 
+            //Para enemigos Orcos
+            foreach (Orcos enemy in enemiesOrco)
+            {
+                enemy.Update(gameTime);
+
+                // Touching an enemy instantly kills the player
+                if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
+                {
+                    if (!Player.isAttacking)
+                        OnPlayerKilledOrco(enemy);
+                    else
+                        muertosOrcos.Add(enemy);
+                }
+
+            }
+            foreach (Orcos enemy in muertosOrcos)
+            {
+                enemiesOrco.Remove(enemy);
+            }
+
 
         }
+
+
 
         /// <summary>
         /// Called when a gem is collected.
@@ -627,6 +650,11 @@ namespace ElfosVsOrcos
         private void OnPlayerKilledLatex(LatexEnemy killedByLatex)
         {
             Player.OnKilled(killedByLatex);
+        }
+
+        private void OnPlayerKilledOrco(Orcos killedByOrco)
+        {
+            Player.OnKilled(killedByOrco);
         }
         /// <summary>
         /// Called when the player reaches the level's exit.
