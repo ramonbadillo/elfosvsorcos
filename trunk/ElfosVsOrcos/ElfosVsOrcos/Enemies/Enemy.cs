@@ -73,21 +73,12 @@ namespace ElfosVsOrcos
         private Animation runAnimation;
         private Animation idleAnimation;
         private AnimationPlayer sprite;
+        private bool bandera = false;
 
         /// <summary>
         /// The direction this enemy is facing and moving along the X axis.
         /// </summary>
-        private FaceDirection direction = FaceDirection.Left;
-
-        /// <summary>
-        /// How long this enemy has been waiting before turning around.
-        /// </summary>
-        private float waitTime;
-
-        /// <summary>
-        /// How long to wait before turning around.
-        /// </summary>
-        private const float MaxWaitTime = .03f;
+        private FaceDirection direction = FaceDirection.Right;
 
         /// <summary>
         /// The speed at which this enemy moves along the X axis.
@@ -101,7 +92,6 @@ namespace ElfosVsOrcos
         {
             this.level = level;
             this.position = position;
-            this.TES = TES;
             LoadContent(spriteSet);
         }
 
@@ -127,8 +117,8 @@ namespace ElfosVsOrcos
         }
 
 
-        public void addOrco() {
-            level.addOrc(new Orcos(level, position, "Orco", 200));
+        public void addOrco(Vector2 pos) {
+            level.addOrc(new Orcos(level, pos, "Orco", 200));
         }
 
 
@@ -137,18 +127,11 @@ namespace ElfosVsOrcos
         /// </summary>
         /// 
         int i = 0;
-        int TES;
         public void Update(GameTime gameTime)
         {
 
-            i++;
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (i > TES)
-            {
-                direction = (FaceDirection)(-(int)direction);
-                i = 0;
-
-            }
+            
             
             elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -157,33 +140,30 @@ namespace ElfosVsOrcos
             int tileX = (int)Math.Floor(posX / Tile.Width) - (int)direction;
             int tileY = (int)Math.Floor(Position.Y / Tile.Height);
 
-            if (waitTime > 0)
+            if (Level.GetCollision(tileX + (int)direction, tileY-1) != TileCollision.Impassable)
             {
-                // Wait for some amount of time.
-                waitTime = Math.Max(0.0f, waitTime - (float)gameTime.ElapsedGameTime.TotalSeconds);
-                if (waitTime <= 0.0f)
+
+                if (level.Player.BoundingRectangle.Right >= this.Vision.Left)
                 {
-                    // Then turn around.
-                    direction = (FaceDirection)(-(int)direction);
+                    bandera = true;
+                }
+                if (bandera)
+                {
                     
-                    //level.enemiesOrco.Add(new Orcos(this, position, spriteSet, 200));
-                }
-            }
-            else
-            {
-                // If we are about to run into a wall or off a cliff, start waiting.
-                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable ||
-                    Level.GetCollision(tileX + (int)direction, tileY) == TileCollision.Passable)
-                {
-                    waitTime = MaxWaitTime;
-                }
-                else
-                {
-                    // Move in the current direction.
                     Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
                     position = position + velocity;
                 }
             }
+            // If we are about to run into a wall crating new Orco
+            else {
+                addOrco(position);
+                addOrco(new Vector2(position.X - (100 * (int)direction), position.Y));
+                level.delHalcon(this);
+            }
+            
+           
+
+
         }
 
         /// <summary>
@@ -194,8 +174,7 @@ namespace ElfosVsOrcos
             // Stop running when the game is paused or before turning around.
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
-                Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0)
+                Level.TimeRemaining == TimeSpan.Zero || bandera==false)
             {
                 sprite.PlayAnimation(idleAnimation);
             }
