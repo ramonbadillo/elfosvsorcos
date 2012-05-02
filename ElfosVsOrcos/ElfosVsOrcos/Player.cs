@@ -112,7 +112,8 @@ namespace ElfosVsOrcos
 
 
         private const float MaxAttackTime = 0.1f;
-        public bool isAttacking;
+        private bool isAttacking;
+        public bool isInAttacking;
         public bool wasAttacking;
         public float attackTime=0.0f;
 
@@ -208,6 +209,7 @@ namespace ElfosVsOrcos
             GetInput(keyboardState, gamePadState);
 
             ApplyPhysics(gameTime);
+            DoAttack(gameTime);
 
             if (IsAlive && IsOnGround)
             {
@@ -215,12 +217,12 @@ namespace ElfosVsOrcos
                 {
                     sprite.PlayAnimation(runAnimation);
                 }
-                else if (isAttacking)
-                {
-                    sprite.PlayAnimation(atackAnimation);
+                //else if (isAttacking)
+                //{
+                    //sprite.PlayAnimation(atackAnimation);
                     //killedSound.Play();
                     
-                }
+                //}
                 else
                 {
                     sprite.PlayAnimation(idleAnimation);
@@ -336,27 +338,35 @@ namespace ElfosVsOrcos
 
             if (isAttacking)
             {
-                Console.WriteLine("" + attackTime);
-                Console.WriteLine("" + wasAttacking);
+                //Console.WriteLine("" + attackTime);
+                //Console.WriteLine("" + wasAttacking);
                 if (!wasAttacking || attackTime > 0.0f)
                 {
-                    Console.WriteLine("" + attackTime);
+                    //Console.WriteLine("" + attackTime);
 
                     if (attackTime == 0.0f)
                     {
                         jumpSound.Play();
-                        Console.WriteLine("ataca");
+                        //sprite.PlayAnimation(atackAnimation);
+                        //Console.WriteLine("ataca");
                     }
 
-                    attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
                     sprite.PlayAnimation(atackAnimation);
+                    attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    
                 }
-                //if (0.0f < jumpTime && jumpTime <= MaxJumpTime) { 
-                //}
+                if (0.0f < attackTime && attackTime <= MaxAttackTime)
+                {
+                    sprite.PlayAnimation(atackAnimation);
+                    Console.WriteLine("ataca");
+                    isInAttacking = isAttacking;
+                }else
+                    attackTime = 0.0f;
             }
             else
                 attackTime = 0.0f;
             wasAttacking = isAttacking;
+            isInAttacking = isAttacking;
                 
         }
 
@@ -389,9 +399,9 @@ namespace ElfosVsOrcos
                         jumpSound.Play();
 
                     jumpTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (isAttacking)
-                        sprite.PlayAnimation(atackAnimation);
-                    else
+                    //if (isAttacking)
+                    //    sprite.PlayAnimation(atackAnimation);
+                    //else
                         sprite.PlayAnimation(jumpAnimation);
                 }
 
@@ -400,9 +410,9 @@ namespace ElfosVsOrcos
                 {
                     // Fully override the vertical velocity with a power curve that gives players more control over the top of the jump
                     velocityY = JumpLaunchVelocity * (1.0f - (float)Math.Pow(jumpTime / MaxJumpTime, JumpControlPower));
-                    if (isAttacking)
-                        sprite.PlayAnimation(atackAnimation);
-                    else
+                    //if (isAttacking)
+                    //    sprite.PlayAnimation(atackAnimation);
+                    //else
                         sprite.PlayAnimation(jumpAnimation);
                 }
                 else
@@ -549,6 +559,7 @@ namespace ElfosVsOrcos
             }
             
         }
+
         public void OnKilled(FlyingEnemy killedBy)
         {
             //Console.WriteLine(ti);
