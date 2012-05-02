@@ -125,7 +125,11 @@ namespace ElfosVsOrcos
             localBounds = new Rectangle(left, top, width, height);
             
         }
-        
+
+
+        public void addOrco() {
+            level.addOrc(new Orcos(level, position, "Orco", 200));
+        }
 
 
         /// <summary>
@@ -161,6 +165,8 @@ namespace ElfosVsOrcos
                 {
                     // Then turn around.
                     direction = (FaceDirection)(-(int)direction);
+                    
+                    //level.enemiesOrco.Add(new Orcos(this, position, spriteSet, 200));
                 }
             }
             else

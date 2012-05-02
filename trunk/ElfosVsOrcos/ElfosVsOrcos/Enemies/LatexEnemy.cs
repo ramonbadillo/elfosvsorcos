@@ -69,6 +69,7 @@ namespace ElfosVsOrcos
         /// The direction this enemy is facing and moving along the X axis.
         /// </summary>
         private FaceDirection direction = FaceDirection.Left;
+        private FaceDirection dir = FaceDirection.Left;
 
         
 
@@ -129,14 +130,19 @@ namespace ElfosVsOrcos
             int tileY = (int)Math.Floor(Position.Y / Tile.Height);
 
 
+
+            
                     //Review if the player is near of the latex enemy
             if (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right)
             {
+
+                dir = (FaceDirection)(int)direction;
                 Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
                 position = position + velocity;
             }
             else if (level.Player.BoundingRectangle.Left >= this.Vision.Right && level.Player.BoundingRectangle.Left <= this.Vision.Right+200)
                     {
+                        dir = (FaceDirection)(-(int)direction);
                         Vector2 velocity = new Vector2(-(int)direction * MoveSpeed * elapsed, 0.0f);
                         position = position + velocity;
                     }
@@ -162,7 +168,7 @@ namespace ElfosVsOrcos
 
 
             // Draw facing the way the enemy is moving.
-            SpriteEffects flip = direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flip = dir > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             sprite.Draw(gameTime, spriteBatch, Position, flip, Color.White);
         }
     }
