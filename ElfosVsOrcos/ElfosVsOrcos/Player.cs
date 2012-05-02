@@ -336,6 +336,8 @@ namespace ElfosVsOrcos
 
             if (isAttacking)
             {
+                Console.WriteLine("" + attackTime);
+                Console.WriteLine("" + wasAttacking);
                 if (!wasAttacking || attackTime > 0.0f)
                 {
                     Console.WriteLine("" + attackTime);
