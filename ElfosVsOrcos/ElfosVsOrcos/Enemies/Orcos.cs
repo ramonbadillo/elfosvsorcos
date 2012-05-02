@@ -182,7 +182,7 @@ namespace ElfosVsOrcos
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
                 Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0 || (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right))
+                waitTime > 0 || (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right) || (level.Player.BoundingRectangle.Left >= this.Vision.Right && level.Player.BoundingRectangle.Left <= this.Vision.Right + 200))
             {
                 sprite.PlayAnimation(idleAnimation);
             }
