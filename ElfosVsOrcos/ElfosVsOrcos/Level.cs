@@ -239,7 +239,7 @@ namespace ElfosVsOrcos
                 // Unknown tile type character
 
                 default:
-                    throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
+                     throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
             }
         }
 
@@ -430,7 +430,7 @@ namespace ElfosVsOrcos
                 //cam.MoveRight(10.0f);
             //cam.Move(new Vector2(30,20)) ;
             //Console.WriteLine(cam.Pos.X);
-            Console.WriteLine(player.Position.X - cam.Pos.X);
+            //Console.WriteLine(player.Position.X - cam.Pos.X);
             //cam.Zoom += 0.01f;
             }
              
@@ -608,6 +608,12 @@ namespace ElfosVsOrcos
             gem.OnCollected(collectedBy);
         }
 
+
+        public int getLifePlayer() {
+            return player.Vida;
+        }
+
+
         /// <summary>
         /// Called when the player is killed.
         /// </summary>
@@ -680,9 +686,16 @@ namespace ElfosVsOrcos
             
             
             DrawTiles(spriteBatch);
+            DrawTiles(spriteBatch);
             
-            foreach (Gem gem in gems)
-                gem.Draw(gameTime, spriteBatch);
+
+            //foreach (Gem gem in gems)
+            //    gem.Draw(gameTime, spriteBatch);
+
+            //foreach (Gem gem in gems)
+            //    gem.Draw(gameTime, spriteBatch);
+
+
 
             //for (int i = EntityLayer + 1; i < layers.Length; ++i)
             //    spriteBatch.Draw(layers[i], Vector2.Zero, Color.White);
