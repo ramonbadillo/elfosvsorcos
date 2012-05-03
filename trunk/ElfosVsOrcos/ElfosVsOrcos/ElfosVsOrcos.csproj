@@ -116,6 +116,7 @@
     <Compile Include="Circle.cs" />
     <Compile Include="Enemies\JefedeJefes.cs" />
     <Compile Include="Enemies\Orcos.cs" />
+    <Compile Include="Flecha.cs" />
     <Compile Include="TileM.cs" />
     <Compile Include="Enemies\LatexEnemy.cs" />
     <Compile Include="Enemies\FlyingEnemy.cs" />
