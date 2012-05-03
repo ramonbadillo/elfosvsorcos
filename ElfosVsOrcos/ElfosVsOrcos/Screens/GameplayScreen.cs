@@ -65,7 +65,7 @@ namespace ElfosVsOrcos
 
             // Load fonts
             hudFont = content.Load<SpriteFont>("Fonts/Hud");
-            //layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
+            
             fondo = this.content.Load<Texture2D>("Backgrounds/Layer0_0");
             // Load overlay textures
             winOverlay = content.Load<Texture2D>("Overlays/you_win");
@@ -211,29 +211,16 @@ namespace ElfosVsOrcos
                         cam.get_transformation(ScreenManager.GraphicsDevice));
 
              
-            //spriteBatch.Begin();
-           
-            //for (int i = 0; i < layers.Length; ++i)
-            //{
-                // Choose a random segment if each background layer for level variety.
-            //    int segmentIndex = levelIndex;
-            //layers = content.Load<Texture2D>("Backgrounds/Layer0_0");
-
-
-            
-            //}
-            
-            //
 
             DrawHud(spriteBatch);
-
             level.Draw(gameTime, spriteBatch);
-
             DrawHud(spriteBatch);
             //Console.WriteLine(cam.Pos.X / 2 + "," + cam.Pos.Y / 2);
-            spriteBatch.Draw(fondo, new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Gray);
-            
-            DrawHud(spriteBatch);
+            //fondo = this.content.Load<Texture2D>("Backgrounds/Layer0_0");
+            //if(levelIndex==0)
+            spriteBatch.Draw(this.content.Load<Texture2D>("Backgrounds/Fondo"+levelIndex), new Vector2(cam.Pos.X-400, cam.Pos.Y-240), Color.Gray);
+           
+
             
             spriteBatch.End();
             
@@ -246,7 +233,8 @@ namespace ElfosVsOrcos
             }
         }
 
-        string VIDAS="LIVES:";
+        
+
         private void DrawHud(SpriteBatch spriteBatch)
         {
             Rectangle titleSafeArea = ScreenManager.GraphicsDevice.Viewport.TitleSafeArea;
@@ -273,15 +261,11 @@ namespace ElfosVsOrcos
             float timeHeight = hudFont.MeasureString(timeString).Y;
 
 
-            DrawShadowedString(spriteBatch, hudFont,level.getLifePlayer()+VIDAS, hudLocation+ new Vector2((ScreenManager.GraphicsDevice.Viewport.Width -100),0.0f), timeColor);
+            DrawShadowedString(spriteBatch, hudFont,"LIVES: "+level.getLifePlayer(), hudLocation+ new Vector2((ScreenManager.GraphicsDevice.Viewport.Width -100),0.0f), timeColor);
             for (int c = 0; c <= level.getLifePlayer(); c++) {
                 
                 spriteBatch.Draw(corazon, hudLocation + new Vector2((ScreenManager.GraphicsDevice.Viewport.Width -10)-(c*10f), timeHeight * 1.2f), Color.White);
             }
-
-
-
-
 
 
                 // Draw Strings

@@ -42,7 +42,7 @@ namespace ElfosVsOrcos
         private SoundEffect killedSound;
         private SoundEffect jumpSound;
         private SoundEffect fallSound;
-        //private SoundEffect attackSound;
+        private SoundEffect attackSound;
 
         public Level Level
         {
@@ -80,7 +80,7 @@ namespace ElfosVsOrcos
         private const float AirDragFactor = 0.58f;
 
         // Constants for controlling vertical movement
-        private const float MaxJumpTime = 0.35f;
+        private const float MaxJumpTime = 0.30f;
         private const float JumpLaunchVelocity = -3500.0f;
         private const float GravityAcceleration = 3400.0f;
         private const float MaxFallSpeed = 550.0f;
@@ -111,10 +111,11 @@ namespace ElfosVsOrcos
         private float jumpTime;
 
 
-        private const float MaxAttackTime = 0.1f;
-        private bool isAttacking;
-        public bool isInAttacking;
-        public bool wasAttacking;
+        private bool click;
+        private const float MaxAttackTime = .5f;
+        public bool Atacando;
+        
+        public bool esperando;
         public float attackTime=0.0f;
 
 
@@ -135,7 +136,7 @@ namespace ElfosVsOrcos
 
         private Color colormono = Color.White;
 
-        private bool derecha;
+        public bool derecha;
         
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace ElfosVsOrcos
             killedSound = Level.Content.Load<SoundEffect>("Sounds/PlayerKilled");
             jumpSound = Level.Content.Load<SoundEffect>("Sounds/PlayerJump");
             fallSound = Level.Content.Load<SoundEffect>("Sounds/PlayerFall");
-            //attackSound = Level.Content.Load<SoundEffect>("Sounds/PlayerAttack");
+            attackSound = Level.Content.Load<SoundEffect>("Sounds/PlayerAttack");
         }
 
         /// <summary>
@@ -208,23 +209,29 @@ namespace ElfosVsOrcos
         {
             
             //Console.WriteLine(gameTime.ElapsedGameTime.Duration());
-            GetInput(keyboardState, gamePadState);
+            GetInput(keyboardState, gamePadState,gameTime);
+            
 
             ApplyPhysics(gameTime);
-            DoAttack(gameTime);
+            
+
 
             if (IsAlive && IsOnGround)
             {
-                if (Math.Abs(Velocity.X) - 0.02f > 0)
+                //if (click)
+                //{
+                    DoAttack(gameTime);
+                    if (Atacando)
+                    {
+                        sprite.PlayAnimation(atackAnimation);
+                    }
+                //}
+
+                else if (Math.Abs(Velocity.X) - 0.02f > 0)
                 {
                     sprite.PlayAnimation(runAnimation);
                 }
-                //else if (isAttacking)
-                //{
-                    //sprite.PlayAnimation(atackAnimation);
-                    //killedSound.Play();
-                    
-                //}
+                
                 else
                 {
                     sprite.PlayAnimation(idleAnimation);
@@ -234,6 +241,7 @@ namespace ElfosVsOrcos
             // Clear input.
             movement = 0.0f;
             isJumping = false;
+            //isAttacking = false;
         }
 
         /// <summary>
@@ -241,7 +249,7 @@ namespace ElfosVsOrcos
         /// </summary>
         private void GetInput(
             KeyboardState keyboardState, 
-            GamePadState gamePadState)
+            GamePadState gamePadState,GameTime gameTime)
         {
             if(colormono==Color.Red)
             ti++;
@@ -273,6 +281,7 @@ namespace ElfosVsOrcos
                 {
                     movement = -1.0f;
                 }
+                
                 else if (gamePadState.IsButtonDown(Buttons.DPadRight) ||
                          keyboardState.IsKeyDown(Keys.Right) ||
                          keyboardState.IsKeyDown(Keys.D))
@@ -280,9 +289,21 @@ namespace ElfosVsOrcos
                     movement = 1.0f;
                 }
 
+                
+                if (keyboardState.IsKeyDown(Keys.Space) ||
+                    gamePadState.IsButtonDown(Buttons.B))
+                {
+                    //if(!esperando)
+                        click = true;
+                }
 
-                isAttacking = keyboardState.IsKeyDown(Keys.Space) ||
-                    gamePadState.IsButtonDown(Buttons.B);
+                
+
+                //if (keyboardState.IsKeyUp(Keys.Space) ||
+                //    gamePadState.IsButtonUp(Buttons.B))
+                //    botonAtaca = true;
+                
+
                 
                 //Console.WriteLine(isAtacando);
                 // Check if the player wants to jump.
@@ -338,13 +359,71 @@ namespace ElfosVsOrcos
                 velocity.Y = 0;
         }
 
+
         public void DoAttack(GameTime gameTime)
         {
+            if (click)
+            {
+                if (!esperando)
+                {
+                    attackSound.Play();
+                    Atacando = true;
+                    esperando = true;
+                    
+                    click = false;
+                    //attackTime = 0.0f;
+                }
+                else
+                {
+                    click = false;
+                    if (attackTime >= MaxAttackTime)
+                    {
+                        Atacando = false;
+                        attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        if (attackTime >= (MaxAttackTime * 2.5))
+                        {
+                            esperando = false;
+                            attackTime = 0.0f;
+                        }
+                    }
 
+                    else
+                        attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+                }
+
+
+            }
+            else
+            {
+
+                if (attackTime >= MaxAttackTime)
+                {
+                    Atacando = false;
+                    attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (attackTime >= (MaxAttackTime * 2.5))
+                    {
+                        esperando = false;
+                        attackTime = 0.0f;
+                    }
+                }
+                
+                else
+                    attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            
+
+
+
+
+            /*
+            //sprite.PlayAnimation(atackAnimation);
             if (isAttacking)
             {
                 //Console.WriteLine("" + attackTime);
                 //Console.WriteLine("" + wasAttacking);
+                sprite.PlayAnimation(atackAnimation);
                 if (!wasAttacking || attackTime > 0.0f)
                 {
                     //Console.WriteLine("" + attackTime);
@@ -353,31 +432,40 @@ namespace ElfosVsOrcos
                     {
                         jumpSound.Play();
                         wasAttacking = true;
-                        //sprite.PlayAnimation(atackAnimation);
+                        //sprite.PlayAnimation(runAnimation);
+                        isInAttacking = true;
                         //Console.WriteLine("ataca");
                     }
 
                     sprite.PlayAnimation(atackAnimation);
                     attackTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    
+
                 }
                 if (0.0f < attackTime && attackTime <= MaxAttackTime)
                 {
                     sprite.PlayAnimation(atackAnimation);
                     Console.WriteLine("ataca");
+
                     //isInAttacking = isAttacking;
-                    
+
                 }
-                else { 
-                attackTime = 0.0f;
-                wasAttacking = false;
+                else
+                {
+                    attackTime = 0.0f;
+                    wasAttacking = false;
+                    isInAttacking = false;
                 }
-                    
+
             }
             else
+            //{
+                isInAttacking = false;
                 attackTime = 0.0f;
-            //wasAttacking = true;
-            isInAttacking = isAttacking;
+                wasAttacking = isAttacking;
+            //}
+            
+            */
+            
                 
         }
 
@@ -424,7 +512,7 @@ namespace ElfosVsOrcos
                     //if (isAttacking)
                     //    sprite.PlayAnimation(atackAnimation);
                     //else
-                        sprite.PlayAnimation(jumpAnimation);
+                        //sprite.PlayAnimation(jumpAnimation);
                 }
                 else
                 {

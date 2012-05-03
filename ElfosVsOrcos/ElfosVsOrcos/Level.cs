@@ -45,8 +45,12 @@ namespace ElfosVsOrcos
         private List<Enemy> enemies = new List<Enemy>();
         private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
         private List<LatexEnemy> enemiesLatex = new List<LatexEnemy>();
-         private List<Orcos> enemiesOrco = new List<Orcos>();
-        
+        private List<Orcos> enemiesOrco = new List<Orcos>();
+
+        List<Enemy> muertos = new List<Enemy>();
+        List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
+        List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
+        List<Orcos> muertosOrcos = new List<Orcos>();
 
         // Key locations in the level.        
         private Vector2 start;
@@ -97,14 +101,17 @@ namespace ElfosVsOrcos
         /// A stream containing the tile data.
         /// </param>
         /// 
-
+        int indexLevel;
         public Level(IServiceProvider serviceProvider, Stream fileStream, int levelIndex)
         {
+
+
+            this.indexLevel = levelIndex;
             // Create a new content manager to load content used just by this level.
             content = new ContentManager(serviceProvider, "Content");
 
             timeRemaining = TimeSpan.FromMinutes(2.0);
-
+            
             LoadTiles(fileStream);
 
             // Load background layer textures. For now, all levels must
@@ -116,7 +123,7 @@ namespace ElfosVsOrcos
                 int segmentIndex = levelIndex;
                 layers[i] = Content.Load<Texture2D>("Backgrounds/Layer" + i + "_" + segmentIndex);
             }
-
+            
             // Load sounds.
             exitReachedSound = Content.Load<SoundEffect>("Sounds/ExitReached");
         }
@@ -223,7 +230,9 @@ namespace ElfosVsOrcos
 
                 // Impassable block
                 case '#':
-                    return LoadVarietyTile("BlockA", 2, TileCollision.Impassable);
+                    //Console.WriteLine("BlockA" + indexLevel + "_");
+                    return LoadVarietyTile("BlockA"+indexLevel+"_", 3, TileCollision.Impassable);
+
                 case 'M':
                     return LoadTileM(x, y, "Volador");
 
@@ -270,7 +279,8 @@ namespace ElfosVsOrcos
         private Tile LoadVarietyTile(string baseName, int variationCount, TileCollision collision)
         {
             int index = random.Next(variationCount);
-            return LoadTile(baseName + index, collision);
+            return LoadTile(baseName  +index, collision);
+
         }
 
 
@@ -533,10 +543,7 @@ namespace ElfosVsOrcos
         /// Animates each enemy and allow them to kill the player.
         /// </summary>
         /// 
-List<Enemy> muertos = new List<Enemy>();
-            List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
-            List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
-            List<Orcos> muertosOrcos = new List<Orcos>();
+
         private void UpdateEnemies(GameTime gameTime)
         {   
             
@@ -547,7 +554,7 @@ List<Enemy> muertos = new List<Enemy>();
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
-                    if (!Player.isInAttacking)
+                    if (!Player.Atacando)
                         OnPlayerKilled(enemy);
                     else
                         muertos.Add(enemy);
@@ -572,7 +579,7 @@ List<Enemy> muertos = new List<Enemy>();
                         
                     }
 
-                    if (!Player.isInAttacking)
+                    if (!Player.Atacando)
                         OnPlayerKilledFl(enemyFl);
                     else
                         muertosFl.Add(enemyFl);
@@ -597,7 +604,7 @@ List<Enemy> muertos = new List<Enemy>();
 
                     }
 
-                    if (!Player.isInAttacking)
+                    if (!Player.Atacando)
                         OnPlayerKilledLatex(enemyLatex);
                     else
                         muertosLatex.Add(enemyLatex);
@@ -616,7 +623,7 @@ List<Enemy> muertos = new List<Enemy>();
                 // Touching an enemy instantly kills the player
                 if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
                 {
-                    if (!Player.isInAttacking)
+                    if (!Player.Atacando)
                         OnPlayerKilledOrco(enemy);
                     else
                         muertosOrcos.Add(enemy);
