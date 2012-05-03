@@ -50,7 +50,7 @@ namespace ElfosVsOrcos
         {
             get
             {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
                 //Console.WriteLine("x "+ Position.X);
                 //Console.WriteLine("y "+ Position.Y);
@@ -63,6 +63,7 @@ namespace ElfosVsOrcos
         private Animation runAnimation;
         private Animation idleAnimation;
         private AnimationPlayer sprite;
+        private bool bandera=true;
 
         /// <summary>
         /// The direction this enemy is facing and moving along the X axis.
@@ -84,10 +85,16 @@ namespace ElfosVsOrcos
         /// </summary>
         private const float MoveSpeed = 50.0f;
 
+
+        public void addBala(Vector2 pos)
+        {
+            level.addBal(new Bala(level, pos, "Bala", 200));
+        }
+
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public FlyingEnemy(Level level, Vector2 position, string spriteSet,int TES)
+        public FlyingEnemy(Level level, Vector2 position, string spriteSet, int TES)
         {
             this.level = level;
             this.position = position;
@@ -102,9 +109,9 @@ namespace ElfosVsOrcos
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,60);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true, 60);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,80);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 80);
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
@@ -113,7 +120,7 @@ namespace ElfosVsOrcos
             int height = (int)(runAnimation.FrameWidth * 0.7);
             int top = runAnimation.FrameHeight - height;
             localBounds = new Rectangle(left, top, width, height);
-            
+
         }
 
 
@@ -135,7 +142,7 @@ namespace ElfosVsOrcos
                 i = 0;
 
             }
-            
+
             elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Calculate tile position based on the side we are walking towards.
@@ -167,6 +174,20 @@ namespace ElfosVsOrcos
                     position = position + velocity;
                 }
             }
+
+
+            if (Level.Player.BoundingRectangle.X >= this.BoundingRectangle.X && Level.Player.BoundingRectangle.X <= this.BoundingRectangle.X + 5)
+            {
+                if (bandera)
+                {
+                    addBala(position);
+                    bandera = false;
+                }
+                
+
+            }
+
+
         }
 
         /// <summary>
@@ -177,20 +198,21 @@ namespace ElfosVsOrcos
             // Stop running when the game is paused or before turning around.
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
-                Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0)
+                Level.TimeRemaining == TimeSpan.Zero || Level.Player.BoundingRectangle.X >= this.BoundingRectangle.X && Level.Player.BoundingRectangle.X <= this.BoundingRectangle.X+50)
             {
                 sprite.PlayAnimation(idleAnimation);
             }
             else
             {
                 sprite.PlayAnimation(runAnimation);
+                bandera = true;
             }
 
 
             // Draw facing the way the enemy is moving.
             SpriteEffects flip = direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            sprite.Draw(gameTime, spriteBatch, Position, flip,Color.White);
+            sprite.Draw(gameTime, spriteBatch, Position, flip, Color.White);
         }
+
     }
 }
