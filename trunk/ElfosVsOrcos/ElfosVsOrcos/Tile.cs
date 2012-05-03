@@ -55,8 +55,10 @@ namespace ElfosVsOrcos
         /// </summary>
         public Tile(Texture2D texture, TileCollision collision)
         {
-            Texture = texture;
-            Collision = collision;
+            
+                Texture = texture;
+                Collision = collision;
+            
         }
     }
 }
