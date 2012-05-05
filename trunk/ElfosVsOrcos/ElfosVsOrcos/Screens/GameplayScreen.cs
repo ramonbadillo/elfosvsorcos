@@ -66,7 +66,6 @@ namespace ElfosVsOrcos
             // Load fonts
             hudFont = content.Load<SpriteFont>("Fonts/Hud");
             
-            fondo = this.content.Load<Texture2D>("Backgrounds/Layer0_0");
             // Load overlay textures
             winOverlay = content.Load<Texture2D>("Overlays/you_win");
             loseOverlay = content.Load<Texture2D>("Overlays/you_lose");
@@ -270,7 +269,7 @@ namespace ElfosVsOrcos
 
                 // Draw Strings
             DrawShadowedString(spriteBatch, hudFont, timeString, hudLocation, timeColor);
-            DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Azure);
+            //DrawShadowedString(spriteBatch, hudFont, "SCORE: " + level.Score.ToString(), hudLocation + new Vector2(0.0f, timeHeight * 1.2f), Color.Azure);
             
             //Console.WriteLine(hudLocation);
             // Determine the status overlay message to show.

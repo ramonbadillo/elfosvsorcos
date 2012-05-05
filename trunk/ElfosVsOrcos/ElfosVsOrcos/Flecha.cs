@@ -67,15 +67,15 @@ namespace ElfosVsOrcos
         /// The speed of the arrow.
         /// </summary>
         private const float MoveSpeed = 64.0f;
-
+        private bool derecha;
         /// <summary>
         /// Constructs a new Arrow.
         /// </summary>
-        public Flecha(Level level, Vector2 position, string spriteSet, int EAS)
+        public Flecha(Level level, Vector2 position, string spriteSet, bool derecha)
         {
             this.level = level;
             this.position = position;
-
+            this.derecha = derecha;
             LoadContent(spriteSet);
         }
 
@@ -87,8 +87,8 @@ namespace ElfosVsOrcos
 
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.1f, true, 32);
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true, 32);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Flecha"), 0.1f, false, 30);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Flecha"), 0.1f, false, 30);
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
@@ -117,19 +117,20 @@ namespace ElfosVsOrcos
             int tileY = (int)Math.Floor(Position.Y / Tile.Height);
 
 
-            if (this.level.Player.derecha)
+            if (!derecha)
             {
                 direction = FaceDirection.Right;
                 //Update position
-                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
+                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed*4, 0.0f);
                 position = position + velocity;
             }
             else
             {
                 direction = FaceDirection.Left;
-                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
+                Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed*4, 0.0f);
                 position = position + velocity;
             }
+             
 
         }
 
@@ -144,7 +145,7 @@ namespace ElfosVsOrcos
 
 
             // Draw facing the way the enemy is moving.
-            SpriteEffects flip = direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects flip = direction > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             sprite.Draw(gameTime, spriteBatch, Position, flip, Color.White);
         }
     }

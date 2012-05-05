@@ -46,11 +46,20 @@ namespace ElfosVsOrcos
         private List<FlyingEnemy> enemiesFl = new List<FlyingEnemy>();
         private List<LatexEnemy> enemiesLatex = new List<LatexEnemy>();
         private List<Orcos> enemiesOrco = new List<Orcos>();
+        private List<JefedeJefes> Jefes = new List<JefedeJefes>();
+        private List<Flecha> Flechas = new List<Flecha>();
+        private List<Bala> enemiesBala = new List<Bala>();
+
+
 
         List<Enemy> muertos = new List<Enemy>();
         List<FlyingEnemy> muertosFl = new List<FlyingEnemy>();
         List<LatexEnemy> muertosLatex = new List<LatexEnemy>();
         List<Orcos> muertosOrcos = new List<Orcos>();
+        List<JefedeJefes> muertosJefes = new List<JefedeJefes>();
+        List<Flecha> flechasusadas = new List<Flecha>();
+        List<Bala> muertosBala = new List<Bala>();
+
 
         // Key locations in the level.        
         private Vector2 start;
@@ -116,13 +125,7 @@ namespace ElfosVsOrcos
 
             // Load background layer textures. For now, all levels must
             // use the same backgrounds and only use the left-most part of them.
-            layers = new Texture2D[3];
-            for (int i = 0; i < layers.Length; ++i)
-            {
-                // Choose a random segment if each background layer for level variety.
-                int segmentIndex = levelIndex;
-                layers[i] = Content.Load<Texture2D>("Backgrounds/Layer" + i + "_" + segmentIndex);
-            }
+            
             
             // Load sounds.
             exitReachedSound = Content.Load<SoundEffect>("Sounds/ExitReached");
@@ -238,11 +241,13 @@ namespace ElfosVsOrcos
 
                 case 'V':
                     return LoadFlyingEnemyTile(x, y, "Volador");
-                // Unknown tile type character
 
                 case 'L':
                     return LoadLatexEnemyTile(x, y, "Latex");
-                // Unknown tile type character
+
+
+                case 'J':
+                    return LoadJefeTile(x, y, "JefedeJefes");
 
                 default:
                      throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
@@ -354,6 +359,14 @@ namespace ElfosVsOrcos
             return new Tile(null, TileCollision.Passable);
         }
 
+        private Tile LoadJefeTile(int x, int y, string spriteSet)
+        {
+            Vector2 position = RectangleExtensions.GetBottomCenter(GetBounds(x, y));
+            Jefes.Add(new JefedeJefes(this, position, spriteSet, 50));
+            return new Tile(null, TileCollision.Passable);
+        }
+
+
 
         /// <summary>
         /// Instantiates a gem and puts it in the level.
@@ -449,13 +462,13 @@ namespace ElfosVsOrcos
             if (keyboardState.IsKeyDown(Keys.R))
                 cam.Zoom -= 0.01f;
 
-            if (player.Position.X - cam.Pos.X > 200)
+            if (player.Position.X - cam.Pos.X > 100)
                 if (keyboardState.IsKeyDown(Keys.Right) || gamePadState.IsButtonDown(Buttons.DPadRight) || gamePadState.IsButtonDown(Buttons.LeftThumbstickRight))
                 {
                     //player.position.X = player.position.X - 4.5f;
                     cam.MoveRight(3.8f);
                 }
-            if (cam.Pos.X -player.Position.X   > 300)
+            if (cam.Pos.X -player.Position.X   > 150)
                 if (keyboardState.IsKeyDown(Keys.Left) || gamePadState.IsButtonDown(Buttons.DPadLeft) || gamePadState.IsButtonDown(Buttons.LeftThumbstickLeft))
                 {
                     //player.position.X = player.position.X - 4.5f;
@@ -532,6 +545,18 @@ namespace ElfosVsOrcos
         public void addOrc(Orcos orco) {
             enemiesOrco.Add(orco);
         }
+
+        public void addFlecha(Flecha flecha)
+        {
+            Flechas.Add(flecha);
+        }
+
+        public void addBal(Bala bala)
+        {
+            enemiesBala.Add(bala);
+        }
+
+        
         public void delHalcon(Enemy hal)
         {
             //enemiesHalcon.Add(hal);
@@ -545,8 +570,26 @@ namespace ElfosVsOrcos
         /// 
 
         private void UpdateEnemies(GameTime gameTime)
-        {   
-            
+        {
+
+            foreach (Bala enemyBala in enemiesBala)
+            {
+                enemyBala.Update(gameTime);
+
+                // Touching an enemy instantly kills the player
+                if (enemyBala.BoundingRectangle.Intersects(Player.BoundingRectangle))
+                {
+
+                    OnPlayerKilledBala(enemyBala);
+                    muertosBala.Add(enemyBala);
+                }
+            }
+            foreach (Bala enemyBala in muertosBala)
+            {
+                enemiesBala.Remove(enemyBala);
+            }
+
+
             foreach (Enemy enemy in enemies)
             {
                 enemy.Update(gameTime);
@@ -559,12 +602,65 @@ namespace ElfosVsOrcos
                     else
                         muertos.Add(enemy);
                 }
+                else
+                {
+                    foreach (Flecha flecha in Flechas)
+                    {
+                        if (flecha.BoundingRectangle.Intersects(enemy.BoundingRectangle))
+                        {
+                            muertos.Add(enemy);
+                            flechasusadas.Add(flecha);
+                        }
+
+                    }
+
+                }
                 
             }
             foreach (Enemy enemy in muertos) {
                 enemies.Remove(enemy);
             }
-            
+
+
+            foreach (JefedeJefes enemy in Jefes)
+            {
+                enemy.Update(gameTime);
+
+                // Touching an enemy instantly kills the player
+                if (enemy.BoundingRectangle.Intersects(Player.BoundingRectangle))
+                {
+                    if (!Player.Atacando)
+                        OnPlayerKilledJefe(enemy);
+                    else
+                    {
+                        muertosJefes.Add(enemy);
+                        enemy.menosVida();
+                    }
+                }
+                else {
+                    foreach (Flecha flecha in Flechas) {
+                        if (flecha.BoundingRectangle.Intersects(enemy.BoundingRectangle)) {
+                            muertosJefes.Add(enemy);
+                            enemy.menosVida();
+                            flechasusadas.Add(flecha);
+                        }
+
+                    }
+                
+                }
+
+            }
+            foreach (JefedeJefes enemy in muertosJefes)
+            {
+                if(enemy.getVida()<=0)
+                    Jefes.Remove(enemy);
+            }
+
+            foreach (Flecha flecha in flechasusadas)
+            {
+                    Flechas.Remove(flecha);
+            }
+
             
             //para enemigos voladores
 
@@ -584,11 +680,36 @@ namespace ElfosVsOrcos
                     else
                         muertosFl.Add(enemyFl);
                 }
+                else
+                {
+                    foreach (Flecha flecha in Flechas)
+                    {
+                        if (flecha.BoundingRectangle.Intersects(enemyFl.BoundingRectangle))
+                        {
+                            muertosFl.Add(enemyFl);
+                            flechasusadas.Add(flecha);
+                        }
+
+                    }
+
+                }
             }
+
+            
+
             foreach (FlyingEnemy enemyFl in muertosFl)
             {
                 enemiesFl.Remove(enemyFl);
             }
+
+
+
+            foreach (Flecha flecha in Flechas)
+            {
+                flecha.Update(gameTime);
+            }
+
+
 
             //para enemigos latex
 
@@ -609,6 +730,19 @@ namespace ElfosVsOrcos
                     else
                         muertosLatex.Add(enemyLatex);
                 }
+                else
+                {
+                    foreach (Flecha flecha in Flechas)
+                    {
+                        if (flecha.BoundingRectangle.Intersects(enemyLatex.BoundingRectangle))
+                        {
+                            muertosLatex.Add(enemyLatex);
+                            flechasusadas.Add(flecha);
+                        }
+
+                    }
+
+                }
             }
             foreach (LatexEnemy enemyLatex in muertosLatex)
             {
@@ -627,6 +761,20 @@ namespace ElfosVsOrcos
                         OnPlayerKilledOrco(enemy);
                     else
                         muertosOrcos.Add(enemy);
+                }
+                else
+                {
+                    foreach (Flecha flecha in Flechas)
+                    {
+                        if (flecha.BoundingRectangle.Intersects(enemy.BoundingRectangle))
+                        {
+
+                            muertosOrcos.Add(enemy);
+                            flechasusadas.Add(flecha);
+                        }
+
+                    }
+
                 }
 
             }
@@ -668,6 +816,15 @@ namespace ElfosVsOrcos
         private void OnPlayerKilled(Enemy killedBy)
         {
             Player.OnKilled(killedBy);
+        }
+        private void OnPlayerKilledJefe(JefedeJefes killedBy)
+        {
+            Player.OnKilled(killedBy);
+        }
+
+        private void OnPlayerKilledBala(Bala killedBy)
+        {
+            Player.OnKilledBA(killedBy);
         }
         private void OnPlayerKilledFl(FlyingEnemy killedByFl)
         {
@@ -724,7 +881,14 @@ namespace ElfosVsOrcos
 
             Player.Draw(gameTime, spriteBatch);
 
+
+            foreach (Bala enemyBala in enemiesBala)
+                enemyBala.Draw(gameTime, spriteBatch);
+
             foreach (Enemy enemy in enemies)
+                enemy.Draw(gameTime, spriteBatch);
+
+            foreach (JefedeJefes enemy in Jefes)
                 enemy.Draw(gameTime, spriteBatch);
 
             foreach (FlyingEnemy enemyFl in enemiesFl)
@@ -732,6 +896,12 @@ namespace ElfosVsOrcos
             
             foreach (LatexEnemy enemyLatex in enemiesLatex)
                 enemyLatex.Draw(gameTime, spriteBatch);
+
+
+            foreach (Flecha flecha in Flechas) 
+                flecha.Draw(gameTime, spriteBatch);
+
+
 
             foreach (Orcos enemyOrco in enemiesOrco)
                 enemyOrco.Draw(gameTime, spriteBatch);
