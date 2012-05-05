@@ -11,7 +11,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ElfosVsOrcos.Enemies
+namespace ElfosVsOrcos
 {
     class JefedeJefes
     {
@@ -38,12 +38,22 @@ namespace ElfosVsOrcos.Enemies
         {
             get
             {
-                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;              
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X;
                 int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
-                //Console.WriteLine("x "+ Position.X);
-                //Console.WriteLine("y "+ Position.Y);
+                
 
                 return new Rectangle(left, top, localBounds.Width, localBounds.Height);
+            }
+        }
+
+             public Rectangle Vision
+        {
+            get
+            {
+                int left = (int)Math.Round(Position.X - sprite.Origin.X) + localBounds.X -200;
+                int top = (int)Math.Round(Position.Y - sprite.Origin.Y) + localBounds.Y;
+                
+                return new Rectangle(left, top, localBounds.Width+200, localBounds.Height);
             }
         }
 
@@ -65,17 +75,20 @@ namespace ElfosVsOrcos.Enemies
         /// <summary>
         /// How long to wait before turning around.
         /// </summary>
-        private const float MaxWaitTime = 1f;
+        private const float MaxWaitTime = .03f;
 
         /// <summary>
         /// The speed at which this enemy moves along the X axis.
         /// </summary>
-        private const float MoveSpeed = 50.0f;
+        private const float MoveSpeed = 100.0f;
+
+
+        private int Vida = 10;
 
         /// <summary>
         /// Constructs a new Enemy.
         /// </summary>
-        public JefedeJefes(Level level, Vector2 position, string spriteSet,int TES)
+        public JefedeJefes(Level level, Vector2 position, string spriteSet, int TES)
         {
             this.level = level;
             this.position = position;
@@ -90,9 +103,9 @@ namespace ElfosVsOrcos.Enemies
         {
             // Load animations.
             spriteSet = "Sprites/" + spriteSet + "/";
-            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,60);
+            runAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Run"), 0.08f, true,93);
             //Console.WriteLine(spriteSet + "Run");
-            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,80);
+            idleAnimation = new Animation(Level.Content.Load<Texture2D>(spriteSet + "Idle"), 0.1f, true,177);
             sprite.PlayAnimation(idleAnimation);
 
             // Calculate bounds within texture size.
@@ -105,15 +118,38 @@ namespace ElfosVsOrcos.Enemies
         }
 
 
+        public void menosVida() {
+            Vida--;
+            colormono = Color.Red;
+        }
+
+        public int getVida() {
+            return Vida;
+        }
+
+
+
 
         /// <summary>
         /// Paces back and forth along a platform, waiting at either end.
         /// </summary>
         /// 
         int i = 0;
+        int f = 0;
         int TES;
+        Color colormono = Color.White;
         public void Update(GameTime gameTime)
         {
+            if (colormono == Color.Red)
+                f++;
+            if (f >= 20) {
+                f = 0;
+                colormono = Color.White;
+            }
+                
+
+
+
 
             i++;
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -144,7 +180,8 @@ namespace ElfosVsOrcos.Enemies
             else
             {
                 // If we are about to run into a wall or off a cliff, start waiting.
-                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable)
+                if (Level.GetCollision(tileX + (int)direction, tileY - 1) == TileCollision.Impassable ||
+                    Level.GetCollision(tileX + (int)direction, tileY) == TileCollision.Passable)
                 {
                     waitTime = MaxWaitTime;
                 }
@@ -154,6 +191,7 @@ namespace ElfosVsOrcos.Enemies
                     Vector2 velocity = new Vector2((int)direction * MoveSpeed * elapsed, 0.0f);
                     position = position + velocity;
                 }
+
             }
         }
 
@@ -166,7 +204,7 @@ namespace ElfosVsOrcos.Enemies
             if (!Level.Player.IsAlive ||
                 Level.ReachedExit ||
                 Level.TimeRemaining == TimeSpan.Zero ||
-                waitTime > 0)
+                waitTime > 0 || (level.Player.BoundingRectangle.Right >= this.Vision.Left && level.Player.BoundingRectangle.Right <= this.Vision.Right) || (level.Player.BoundingRectangle.Left >= this.Vision.Right && level.Player.BoundingRectangle.Left <= this.Vision.Right + 200))
             {
                 sprite.PlayAnimation(idleAnimation);
             }
@@ -178,7 +216,7 @@ namespace ElfosVsOrcos.Enemies
 
             // Draw facing the way the enemy is moving.
             SpriteEffects flip = direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            sprite.Draw(gameTime, spriteBatch, Position, flip,Color.White);
+            sprite.Draw(gameTime, spriteBatch, Position, flip,colormono);
         }
     }
 }
